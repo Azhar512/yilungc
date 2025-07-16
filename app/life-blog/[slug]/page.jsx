@@ -1,8 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getPostBySlug } from "@/lib/db"
-import { formatDate, calculateReadingTime } from "@/lib/utils"
+import { getPostBySlug } from "../../../lib/db"
+import { formatDate, calculateReadingTime } from "../../../lib/utils"
 import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react"
 
 export async function generateMetadata({ params }) {
