@@ -1,5 +1,5 @@
-import PostCard from "@/components/post-card"
-import { getPostsByCategory } from "@/lib/db"
+import PostCard from "../../components/post-card"
+import { getPostsByCategory } from "../../lib/db"
 import { Heart } from "lucide-react"
 
 export const metadata = {
