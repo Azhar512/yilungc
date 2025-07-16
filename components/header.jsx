@@ -191,7 +191,7 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border/50 animate-in slide-in-from-top duration-200">
+          <div className="md:hidden py-4 border-t border-border/50 animate-in slide-in-from-top duration-200 max-h-[50vh] overflow-y-auto">
             <nav className="flex flex-col space-y-2">
               {isHomePage ? (
                 <Link
