@@ -5,7 +5,7 @@ import { Menu, XIcon, Search } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { generateSlug } from "../lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
-import SearchOverlay from "../components/search-overlay" // Import the new SearchOverlay
+import SearchOverlay from "./search-overlay" // Corrected import path: now relative to components/
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,9 +21,8 @@ export default function Header() {
   // Define the new category structure for the header
   const ukLifeHeaderCategories = [
     {
-      name: "Life in UK",
+      name: "Raising kids in London",
       subCategories: [
-        { name: "Raising kids in London", slug: "raising-kids-in-london" },
         { name: "UK private education", slug: "uk-private-education" },
         { name: "Oversea family", slug: "oversea-family" },
         { name: "Being a Mother", slug: "being-a-mother" },
@@ -57,7 +56,6 @@ export default function Header() {
 
   // For Book Reviews, these are now direct links to sections (tags)
   const bookReviewHeaderCategories = [
-    { name: "Pinned Reviews", slug: "pinned-reviews" }, // Special section for pinned posts
     { name: "HerRead", slug: "herread" },
     { name: "Taiwan and Transitional Justice", slug: "taiwan-and-transitional-justice" },
     { name: "Parenting", slug: "parenting" },
@@ -66,7 +64,6 @@ export default function Header() {
     { name: "Science and Tech", slug: "science-and-tech" },
     { name: "Novel and Bio", slug: "novel-and-bio" },
     { name: "Reading List", slug: "reading-list" },
-    { name: "Poems", slug: "poems" },
   ]
 
   useEffect(() => {
@@ -88,7 +85,6 @@ export default function Header() {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group">
-              {/* Removed group-hover:scale-110 from here */}
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center transition-transform duration-200">
                 <span className="text-primary-foreground font-bold text-sm">YL</span>
               </div>
@@ -233,7 +229,7 @@ export default function Header() {
                         // Direct link for single-item categories in mobile
                         <Link
                           key={category.slug}
-                          href={`${baseHref}${category.slug}`}
+                          href={`${baseHref}${generateSlug(category.name)}`}
                           onClick={() => setIsMenuOpen(false)}
                           className="block px-3 py-2 rounded-lg text-foreground hover:text-primary hover:bg-muted transition-all duration-200"
                         >

@@ -162,6 +162,10 @@
   .animate-scale-in {
     animation: scaleIn 1.2s ease-out forwards;
   }
+
+  .uk-life-gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
 }
 
 @keyframes fadeIn {

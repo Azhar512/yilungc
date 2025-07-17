@@ -1,10 +1,11 @@
 "use client"
 import { useState, useEffect } from "react"
 import PostCard from "../../components/post-card"
-import { getPostsByCategory } from "../..//lib/db"
+import { getPostsByCategory } from "../../lib/db"
 import { BookOpen } from "lucide-react"
 import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header" // Import Header
+import Image from "next/image" // Import Image component
 
 export default function BookReviewsClientPage() {
   const [posts, setPosts] = useState([])
@@ -40,14 +41,18 @@ export default function BookReviewsClientPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background theme-book-reviews">
-      {" "}
-      {/* Added theme-book-reviews class */}
-      <Header /> {/* Add Header here */}
+      <Header />
       {/* Header Section */}
-      <section className="bg-gradient-to-r from-accent via-primary to-secondary text-primary-foreground py-20 pt-32">
-        {" "}
-        {/* Added pt-32 for header clearance */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative bg-gradient-to-r from-accent via-primary to-secondary text-primary-foreground py-20 pt-32 overflow-hidden">
+        <Image
+          src="https://i.postimg.cc/BvxKDj4G/bookreview.png"
+          alt="Book Reviews Header"
+          fill
+          className="object-cover absolute inset-0 opacity-70"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-foreground/20 to-transparent" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in">
             <div className="flex justify-center mb-6">
               <div className="p-4 bg-primary-foreground/20 backdrop-blur-sm rounded-full">

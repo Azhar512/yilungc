@@ -45,7 +45,8 @@ export default function UKLifeClientPage() {
               className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-4 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
-              UK Life <br /> Adventures
+              Life In <br />
+              <span className="uk-life-gradient-text">United Kingdom</span>
             </h1>
             <p
               className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in"
@@ -66,14 +67,14 @@ export default function UKLifeClientPage() {
           {/* Right Image Area */}
           <div className="hidden md:flex items-center justify-center h-full p-8">
             <div
-              className="relative w-full h-full max-w-md max-h-[400px] lg:max-h-[500px] animate-scale-in"
+              className="relative w-full h-full max-w-md max-h-[400px] lg:max-h-[500px] animate-scale-in group"
               style={{ animationDelay: "0.8s" }}
             >
               <Image
-                src="https://images.unsplash.com/photo-1506781961300-8d5676b7eb20?auto=format&fit=crop&w=600&h=800&q=80"
+                src="https://i.postimg.cc/rmMt9qwR/uklife1.png"
                 alt="UK Life Decorative"
                 fill
-                className="object-cover rounded-lg shadow-xl"
+                className="object-cover rounded-lg shadow-2xl group-hover:shadow-3xl transition-all duration-300 group-hover:scale-105"
                 priority
               />
             </div>
