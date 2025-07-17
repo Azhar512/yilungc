@@ -73,12 +73,12 @@
     --secondary-hover: 0 0% 25%;
   }
 
-  /* UK Life Theme (Beige/Brown/Natural) - Refined */
+  /* UK Life Theme (Beige/Brown/Natural) - Refined to match the new image */
   .theme-uk-life {
-    --background: 30 20% 95%; /* Light beige for background */
-    --foreground: 28 35% 25%; /* Dark brown for text */
+    --background: 30 20% 90%; /* Light beige from the image */
+    --foreground: 28 35% 20%; /* Dark brown for text, matching image */
 
-    --primary: 28 35% 40%; /* Muted warm brown for buttons/accents */
+    --primary: 28 35% 40%; /* Muted warm brown for buttons/accents (similar to button in image) */
     --primary-foreground: 30 20% 98%; /* Light beige for button text */
 
     --secondary: 15 50% 45%; /* Earthy terracotta (less used in this theme) */
@@ -87,18 +87,18 @@
     --accent: 80 30% 45%; /* Soft sage green (less used in this theme) */
     --accent-foreground: 30 20% 98%;
 
-    --muted: 30 20% 90%; /* Slightly darker beige */
-    --muted-foreground: 28 35% 45%; /* Muted brown-grey for secondary text */
+    --muted: 30 20% 85%; /* Slightly darker beige for muted elements */
+    --muted-foreground: 28 35% 35%; /* Muted brown-grey for secondary text */
 
-    --border: 30 15% 80%; /* Soft, subtle border */
-    --input: 30 20% 98%;
+    --border: 30 15% 75%; /* Soft, subtle border */
+    --input: 30 20% 90%;
     --ring: 28 35% 40%;
 
-    --card: 30 20% 98%; /* Light beige for cards */
-    --card-foreground: 28 35% 25%; /* Dark brown for card text */
+    --card: 30 20% 95%; /* Slightly lighter beige for cards */
+    --card-foreground: 28 35% 20%; /* Dark brown for card text */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 28 35% 25%;
+    --popover-foreground: 28 35% 20%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
