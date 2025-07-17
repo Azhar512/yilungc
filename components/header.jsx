@@ -3,7 +3,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, XIcon, Search } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { generateSlug } from "../lib/utils" // Corrected import path for generateSlug
+import { generateSlug } from "../lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
 
 export default function Header() {
@@ -22,76 +22,62 @@ export default function Header() {
     {
       name: "Life in UK",
       subCategories: [
-        { name: "London Life", slug: "london-life" }, // Existing sub_topic
-        { name: "Culture & Society", slug: "culture-society" }, // Existing sub_topic
-        { name: "Outdoor Activities", slug: "outdoor-activities" }, // Existing sub_topic
-        { name: "Daily Life", slug: "daily-life" }, // New, assuming content will be added
+        { name: "London Life", slug: "london-life" },
+        { name: "Culture & Society", slug: "culture-society" },
+        { name: "Outdoor Activities", slug: "outdoor-activities" },
+        { name: "Daily Life", slug: "daily-life" },
       ],
     },
     {
       name: "Raising Kids",
       subCategories: [
-        { name: "Raising kids in London", slug: "raising-kids-in-london" }, // New, assuming content will be added
-        { name: "UK private education", slug: "uk-private-education" }, // New, assuming content will be added
-        { name: "Oversea family", slug: "oversea-family" }, // New, assuming content will be added
-        { name: "Being a Mother", slug: "being-a-mother" }, // New, assuming content will be added
+        { name: "Raising kids in London", slug: "raising-kids-in-london" },
+        { name: "UK private education", slug: "uk-private-education" },
+        { name: "Oversea family", slug: "oversea-family" },
+        { name: "Being a Mother", slug: "being-a-mother" },
       ],
     },
     {
       name: "Travel with Kids",
       subCategories: [
-        { name: "UK Travel", slug: "uk-travel" }, // Existing sub_topic
-        { name: "Travel with kids in UK", slug: "travel-with-kids-in-uk" }, // New, assuming content will be added
-        { name: "Travel with kids abroad", slug: "travel-with-kids-abroad" }, // New, assuming content will be added
+        { name: "UK Travel", slug: "uk-travel" },
+        { name: "Travel with kids in UK", slug: "travel-with-kids-in-uk" },
+        { name: "Travel with kids abroad", slug: "travel-with-kids-abroad" },
       ],
     },
     {
       name: "London",
       subCategories: [
-        { name: "London Life", slug: "london-life" }, // Existing sub_topic
-        { name: "Edinburgh", slug: "edinburgh" }, // Existing sub_topic (city, but user listed under London)
-        { name: "London Afternoon Tea", slug: "london-afternoon-tea" }, // New, assuming content will be added
-        { name: "London restaurants", slug: "london-restaurants" }, // New, assuming content will be added
-        { name: "London never gets boring", slug: "london-never-gets-boring" }, // New, assuming content will be added
+        { name: "London Life", slug: "london-life" },
+        { name: "Edinburgh", slug: "edinburgh" },
+        { name: "London Afternoon Tea", slug: "london-afternoon-tea" },
+        { name: "London restaurants", slug: "london-restaurants" },
+        { name: "London never gets boring", slug: "london-never-gets-boring" },
       ],
     },
     {
       name: "Personal Thoughts",
-      subCategories: [{ name: "Personal Thoughts", slug: "personal-thoughts" }], // Make it a sub-category for scrolling
+      subCategories: [{ name: "Personal Thoughts", slug: "personal-thoughts" }],
     },
   ]
 
+  // For Book Reviews, these are now direct links to sections (tags)
   const bookReviewHeaderCategories = [
-    { name: "HerRead", subCategories: [{ name: "HerRead", slug: "herread" }] },
-    {
-      name: "Taiwan and Transitional Justice",
-      subCategories: [{ name: "Taiwan and Transitional Justice", slug: "taiwan-and-transitional-justice" }],
-    },
-    { name: "Parenting", subCategories: [{ name: "Parenting", slug: "parenting" }] },
-    {
-      name: "Business and Startups",
-      subCategories: [{ name: "Business and Startups", slug: "business-and-startups" }],
-    },
-    { name: "Life and Finance", subCategories: [{ name: "Life and Finance", slug: "life-and-finance" }] },
-    {
-      name: "Science and Tech",
-      subCategories: [
-        { name: "Science Fiction", slug: "science-fiction" }, // Existing tag
-        { name: "Philosophy", slug: "philosophy" }, // Existing tag
-      ],
-    },
-    {
-      name: "Novel and Bio",
-      subCategories: [
-        { name: "Fiction", slug: "fiction" }, // Existing tag (assuming 'Fiction' is a tag)
-        { name: "Classic", slug: "classic" }, // Existing tag
-        { name: "Contemporary", slug: "contemporary" }, // Existing tag
-        { name: "Humor", slug: "humor" }, // Existing tag
-        { name: "Adventure", slug: "adventure" }, // Existing tag
-      ],
-    },
-    { name: "Reading List", subCategories: [{ name: "Reading List", slug: "reading-list" }] },
-    { name: "Poems", subCategories: [{ name: "Poems", slug: "poems" }] }, // New, assuming content will be added
+    { name: "Pinned Reviews", slug: "pinned-reviews" }, // Special section for pinned posts
+    { name: "HerRead", slug: "herread" },
+    { name: "Taiwan and Transitional Justice", slug: "taiwan-and-transitional-justice" },
+    { name: "Parenting", slug: "parenting" },
+    { name: "Business and Startups", slug: "business-and-startups" },
+    { name: "Life and Finance", slug: "life-and-finance" },
+    { name: "Science Fiction", slug: "science-fiction" },
+    { name: "Philosophy", slug: "philosophy" },
+    { name: "Fiction", slug: "fiction" },
+    { name: "Classic", slug: "classic" },
+    { name: "Contemporary", slug: "contemporary" },
+    { name: "Humor", slug: "humor" },
+    { name: "Adventure", slug: "adventure" },
+    { name: "Reading List", slug: "reading-list" },
+    { name: "Poems", slug: "poems" },
   ]
 
   useEffect(() => {
@@ -127,7 +113,19 @@ export default function Header() {
               >
                 <span className="font-medium">About Me</span>
               </Link>
+            ) : isBookReviewsPage ? (
+              // Render direct links for Book Reviews
+              navCategories.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`${baseHref}${category.slug}`}
+                  className="flex items-center space-x-1 text-foreground hover:text-primary transition-colors duration-200 group"
+                >
+                  <span className="font-medium">{category.name}</span>
+                </Link>
+              ))
             ) : (
+              // Render dropdowns for UK Life
               navCategories.map((category) =>
                 category.subCategories && category.subCategories.length > 0 ? (
                   <DropdownMenu
@@ -159,7 +157,7 @@ export default function Header() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  // If no sub-categories, it's a direct link (e.g., "HerRead")
+                  // Direct link for single-item categories (e.g., Personal Thoughts in UK Life)
                   <Link
                     key={category.name}
                     href={`${baseHref}${generateSlug(category.name)}`}
@@ -201,7 +199,20 @@ export default function Header() {
                 >
                   <span className="font-medium">About Me</span>
                 </Link>
+              ) : isBookReviewsPage ? (
+                // Render direct links for Book Reviews in mobile
+                navCategories.map((category) => (
+                  <Link
+                    key={category.slug}
+                    href={`${baseHref}${category.slug}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-3 py-2 rounded-lg text-foreground hover:text-primary hover:bg-muted transition-all duration-200"
+                  >
+                    <span className="font-medium">{category.name}</span>
+                  </Link>
+                ))
               ) : (
+                // Render dropdowns for UK Life in mobile
                 navCategories.map((category) => (
                   <div key={category.name}>
                     <span className="block px-3 py-2 font-medium text-foreground">{category.name}</span>

@@ -24,7 +24,7 @@ export async function POST(request) {
 
     const postData = {
       title,
-      slug: generateSlug(title),
+      slug: generateSlug(title), // Slug is generated here, but Notion doesn't have a direct 'slug' property
       content,
       excerpt: excerpt || content.substring(0, 150) + "...",
       category: category,
@@ -36,17 +36,17 @@ export async function POST(request) {
       pinned: !!pinned, // Convert to boolean
     }
 
-    // Simulate saving to local JSON (in-memory for this demo)
+    // Create post in Notion
     const newPost = await createPost(postData)
 
     return NextResponse.json({
       success: true,
-      message: `Post for ${category} created successfully`,
+      message: `Post for ${category} created successfully in Notion`,
       post: newPost,
     })
   } catch (error) {
     console.error("Webhook error:", error)
-    return NextResponse.json({ error: "Failed to create post" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to create post in Notion" }, { status: 500 })
   }
 }
 
