@@ -39,7 +39,7 @@ export default function UKLifeClientPage({ initialPosts, initialUniqueSubTopics 
     <div className="min-h-screen flex flex-col bg-background theme-uk-life">
       <Header />
       {/* Hero Section - Redesigned to match the image */}
-      <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-16 bg-background">
+      <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-16 uk-life-hero-background-gradient">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
           {/* Left Content Area */}
           <div className="text-foreground text-center md:text-left flex flex-col justify-center h-full">
