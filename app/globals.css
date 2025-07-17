@@ -73,12 +73,12 @@
     --secondary-hover: 0 0% 25%;
   }
 
-  /* UK Life Theme (Darker Beige/Brown/Natural) */
+  /* UK Life Theme (Dark Beige / Light Brown) */
   .theme-uk-life {
-    --background: 30 20% 85%; /* Darker beige for background */
-    --foreground: 28 35% 15%; /* Darker brown for text, for better contrast */
+    --background: 30 25% 75%; /* Dark beige / Light brown */
+    --foreground: 28 35% 10%; /* Darker brown for text */
 
-    --primary: 28 35% 35%; /* Slightly darker primary for buttons/accents */
+    --primary: 28 35% 30%; /* Slightly darker primary for buttons/accents */
     --primary-foreground: 30 20% 98%; /* Light beige for button text */
 
     --secondary: 15 50% 40%; /* Earthy terracotta (less used in this theme) */
@@ -87,24 +87,24 @@
     --accent: 80 30% 40%; /* Soft sage green (less used in this theme) */
     --accent-foreground: 30 20% 98%;
 
-    --muted: 30 20% 80%; /* Slightly darker beige for muted elements */
-    --muted-foreground: 28 35% 30%; /* Muted brown-grey for secondary text */
+    --muted: 30 25% 70%; /* Slightly darker than background for muted elements */
+    --muted-foreground: 28 35% 25%; /* Muted brown-grey for secondary text */
 
-    --border: 30 15% 70%; /* Soft, subtle border */
-    --input: 30 20% 85%;
-    --ring: 28 35% 35%;
+    --border: 30 15% 65%; /* Darker, subtle border */
+    --input: 30 25% 75%;
+    --ring: 28 35% 30%;
 
-    --card: 30 20% 90%; /* Slightly lighter beige for cards, but still darker than previous background */
-    --card-foreground: 28 35% 15%; /* Darker brown for card text */
+    --card: 30 25% 80%; /* Slightly lighter than background for cards */
+    --card-foreground: 28 35% 10%; /* Darker brown for card text */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 28 35% 15%;
+    --popover-foreground: 28 35% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     /* Hover states for gradients */
-    --primary-hover: 28 35% 30%;
+    --primary-hover: 28 35% 25%;
     --secondary-hover: 15 50% 35%;
   }
 
