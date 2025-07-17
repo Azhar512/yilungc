@@ -73,39 +73,39 @@
     --secondary-hover: 0 0% 25%;
   }
 
-  /* UK Life Theme (Beige/Brown/Natural) - Refined to match the new image */
+  /* UK Life Theme (Darker Beige/Brown/Natural) */
   .theme-uk-life {
-    --background: 30 20% 90%; /* Light beige from the image */
-    --foreground: 28 35% 20%; /* Dark brown for text, matching image */
+    --background: 30 20% 85%; /* Darker beige for background */
+    --foreground: 28 35% 15%; /* Darker brown for text, for better contrast */
 
-    --primary: 28 35% 40%; /* Muted warm brown for buttons/accents (similar to button in image) */
+    --primary: 28 35% 35%; /* Slightly darker primary for buttons/accents */
     --primary-foreground: 30 20% 98%; /* Light beige for button text */
 
-    --secondary: 15 50% 45%; /* Earthy terracotta (less used in this theme) */
+    --secondary: 15 50% 40%; /* Earthy terracotta (less used in this theme) */
     --secondary-foreground: 30 20% 98%;
 
-    --accent: 80 30% 45%; /* Soft sage green (less used in this theme) */
+    --accent: 80 30% 40%; /* Soft sage green (less used in this theme) */
     --accent-foreground: 30 20% 98%;
 
-    --muted: 30 20% 85%; /* Slightly darker beige for muted elements */
-    --muted-foreground: 28 35% 35%; /* Muted brown-grey for secondary text */
+    --muted: 30 20% 80%; /* Slightly darker beige for muted elements */
+    --muted-foreground: 28 35% 30%; /* Muted brown-grey for secondary text */
 
-    --border: 30 15% 75%; /* Soft, subtle border */
-    --input: 30 20% 90%;
-    --ring: 28 35% 40%;
+    --border: 30 15% 70%; /* Soft, subtle border */
+    --input: 30 20% 85%;
+    --ring: 28 35% 35%;
 
-    --card: 30 20% 95%; /* Slightly lighter beige for cards */
-    --card-foreground: 28 35% 20%; /* Dark brown for card text */
+    --card: 30 20% 90%; /* Slightly lighter beige for cards, but still darker than previous background */
+    --card-foreground: 28 35% 15%; /* Darker brown for card text */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 28 35% 20%;
+    --popover-foreground: 28 35% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     /* Hover states for gradients */
-    --primary-hover: 28 35% 35%;
-    --secondary-hover: 15 50% 40%;
+    --primary-hover: 28 35% 30%;
+    --secondary-hover: 15 50% 35%;
   }
 
   html {
