@@ -1,45 +1,22 @@
 "use client"
-import { useState } from "react" // Keep useState for internal component state if needed, but remove for data
+import { useState } from "react"
 import PostCard from "../../components/post-card"
-// Removed direct import of getPostsByCategory and getUniqueSubTopics as data comes from props
 import { Heart } from "lucide-react"
 import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header"
 import Image from "next/image"
 import Link from "next/link"
 
-// Accept initialPosts and initialUniqueSubTopics as props
 export default function UKLifeClientPage({ initialPosts, initialUniqueSubTopics }) {
   const [posts, setPosts] = useState(initialPosts)
   const [uniqueSubTopics, setUniqueSubTopics] = useState(initialUniqueSubTopics)
-  const [loading, setLoading] = useState(false) // Set to false as data is already loaded
-
-  // Remove the useEffect that fetches data, as it's now done on the server
-  // useEffect(() => {
-  //   async function fetchPostsAndSubTopics() {
-  //     setLoading(true)
-  //     const allPosts = await getPostsByCategory("life-blog", 50)
-  //     console.log("Fetched UK Life posts:", allPosts)
-
-  //     const subTopics = new Set()
-  //     allPosts.forEach((post) => {
-  //       if (post.sub_topic) {
-  //         subTopics.add(post.sub_topic)
-  //       }
-  //     })
-  //     setUniqueSubTopics(Array.from(subTopics).sort())
-
-  //     setPosts(allPosts)
-  //     setLoading(false)
-  //   }
-  //   fetchPostsAndSubTopics()
-  // }, [])
+  const [loading, setLoading] = useState(false)
 
   return (
     <div className="min-h-screen flex flex-col bg-background theme-uk-life">
       <Header />
-      {/* Hero Section - Redesigned to match the image */}
-      <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-16 uk-life-hero-background-gradient">
+      {/* Hero Section - Updated to solid background */}
+      <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-16 bg-background">
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
           {/* Left Content Area */}
           <div className="text-foreground text-center md:text-left flex flex-col justify-center h-full">

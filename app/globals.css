@@ -73,10 +73,10 @@
     --secondary-hover: 0 0% 25%;
   }
 
-  /* UK Life Theme (Light Brownish with Gradient) */
+  /* UK Life Theme (Very Light Warm Beige/Cream) */
   .theme-uk-life {
-    --background: 30 20% 90%; /* Light brownish for general page background */
-    --foreground: 28 35% 20%; /* Dark brown for text */
+    --background: 30 20% 95%; /* Very light, warm beige/cream */
+    --foreground: 28 35% 20%; /* Dark brown for text, for good contrast */
 
     --primary: 28 35% 40%; /* Muted warm brown for buttons/accents */
     --primary-foreground: 30 20% 98%; /* Light beige for button text */
@@ -87,14 +87,14 @@
     --accent: 80 30% 45%; /* Soft sage green (less used in this theme) */
     --accent-foreground: 30 20% 98%;
 
-    --muted: 30 20% 85%; /* Slightly darker beige for muted elements */
+    --muted: 30 20% 90%; /* Slightly darker than background for muted elements */
     --muted-foreground: 28 35% 35%; /* Muted brown-grey for secondary text */
 
-    --border: 30 15% 75%; /* Soft, subtle border */
-    --input: 30 20% 90%;
+    --border: 30 15% 80%; /* Soft, subtle border */
+    --input: 30 20% 95%;
     --ring: 28 35% 40%;
 
-    --card: 30 20% 95%; /* Slightly lighter brownish for cards */
+    --card: 30 20% 98%; /* Lighter than background for cards */
     --card-foreground: 28 35% 20%; /* Dark brown for card text */
 
     --popover: 0 0% 100%;
@@ -107,9 +107,7 @@
     --primary-hover: 28 35% 35%;
     --secondary-hover: 15 50% 40%;
 
-    /* New variables for UK Life hero gradient */
-    --uk-life-gradient-start: 30 25% 80%; /* Light, warm beige */
-    --uk-life-gradient-end: 20 30% 75%; /* Slightly darker, more brownish tone */
+    /* Removed gradient variables as per new image */
   }
 
   html {
@@ -171,10 +169,7 @@
     @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
   }
 
-  /* New gradient class for UK Life hero section */
-  .uk-life-hero-background-gradient {
-    background: linear-gradient(135deg, hsl(var(--uk-life-gradient-start)) 0%, hsl(var(--uk-life-gradient-end)) 100%);
-  }
+  /* Removed .uk-life-hero-background-gradient as per new image */
 }
 
 @keyframes fadeIn {
