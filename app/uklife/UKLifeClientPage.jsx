@@ -1,37 +1,39 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState } from "react" // Keep useState for internal component state if needed, but remove for data
 import PostCard from "../../components/post-card"
-import { getPostsByCategory } from "../../lib/db"
+// Removed direct import of getPostsByCategory and getUniqueSubTopics as data comes from props
 import { Heart } from "lucide-react"
 import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header"
 import Image from "next/image"
 import Link from "next/link"
 
-export default function UKLifeClientPage() {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [uniqueSubTopics, setUniqueSubTopics] = useState([])
+// Accept initialPosts and initialUniqueSubTopics as props
+export default function UKLifeClientPage({ initialPosts, initialUniqueSubTopics }) {
+  const [posts, setPosts] = useState(initialPosts)
+  const [uniqueSubTopics, setUniqueSubTopics] = useState(initialUniqueSubTopics)
+  const [loading, setLoading] = useState(false) // Set to false as data is already loaded
 
-  useEffect(() => {
-    async function fetchPostsAndSubTopics() {
-      setLoading(true)
-      const allPosts = await getPostsByCategory("life-blog", 50)
-      console.log("Fetched UK Life posts:", allPosts)
+  // Remove the useEffect that fetches data, as it's now done on the server
+  // useEffect(() => {
+  //   async function fetchPostsAndSubTopics() {
+  //     setLoading(true)
+  //     const allPosts = await getPostsByCategory("life-blog", 50)
+  //     console.log("Fetched UK Life posts:", allPosts)
 
-      const subTopics = new Set()
-      allPosts.forEach((post) => {
-        if (post.sub_topic) {
-          subTopics.add(post.sub_topic)
-        }
-      })
-      setUniqueSubTopics(Array.from(subTopics).sort())
+  //     const subTopics = new Set()
+  //     allPosts.forEach((post) => {
+  //       if (post.sub_topic) {
+  //         subTopics.add(post.sub_topic)
+  //       }
+  //     })
+  //     setUniqueSubTopics(Array.from(subTopics).sort())
 
-      setPosts(allPosts)
-      setLoading(false)
-    }
-    fetchPostsAndSubTopics()
-  }, [])
+  //     setPosts(allPosts)
+  //     setLoading(false)
+  //   }
+  //   fetchPostsAndSubTopics()
+  // }, [])
 
   return (
     <div className="min-h-screen flex flex-col bg-background theme-uk-life">

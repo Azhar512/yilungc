@@ -1,37 +1,39 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState } from "react" // Keep useState for internal component state if needed, but remove for data
 import PostCard from "../../components/post-card"
-import { getPostsByCategory } from "../../lib/db"
+// Removed direct import of getPostsByCategory and getUniqueTags as data comes from props
 import { BookOpen } from "lucide-react"
 import { generateSlug } from "../../lib/utils"
-import Header from "../../components/header" // Import Header
-import Image from "next/image" // Import Image component
+import Header from "../../components/header"
+import Image from "next/image"
 
-export default function BookReviewsClientPage() {
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [uniqueTags, setUniqueTags] = useState([])
+// Accept initialPosts and initialUniqueTags as props
+export default function BookReviewsClientPage({ initialPosts, initialUniqueTags }) {
+  const [posts, setPosts] = useState(initialPosts)
+  const [uniqueTags, setUniqueTags] = useState(initialUniqueTags)
+  const [loading, setLoading] = useState(false) // Set to false as data is already loaded
 
-  useEffect(() => {
-    async function fetchPosts() {
-      setLoading(true)
-      const allPosts = await getPostsByCategory("book-reviews", 50)
-      console.log("Fetched book reviews:", allPosts)
+  // Remove the useEffect that fetches data, as it's now done on the server
+  // useEffect(() => {
+  //   async function fetchPosts() {
+  //     setLoading(true)
+  //     const allPosts = await getPostsByCategory("book-reviews", 50)
+  //     console.log("Fetched book reviews:", allPosts)
 
-      const tags = new Set()
-      allPosts.forEach((post) => {
-        if (post.tags) {
-          post.tags.forEach((tag) => tags.add(tag))
-        }
-      })
-      setUniqueTags(Array.from(tags).sort())
+  //     const tags = new Set()
+  //     allPosts.forEach((post) => {
+  //       if (post.tags) {
+  //         post.tags.forEach((tag) => tags.add(tag))
+  //       }
+  //     })
+  //     setUniqueTags(Array.from(tags).sort())
 
-      setPosts(allPosts)
-      console.log("Posts state updated:", allPosts.length, "posts")
-      setLoading(false)
-    }
-    fetchPosts()
-  }, [])
+  //     setPosts(allPosts)
+  //     console.log("Posts state updated:", allPosts.length, "posts")
+  //     setLoading(false)
+  //   }
+  //   fetchPosts()
+  // }, [])
 
   const pinnedPosts = posts.filter((post) => post.pinned)
   const nonPinnedPosts = posts.filter((post) => !post.pinned)
