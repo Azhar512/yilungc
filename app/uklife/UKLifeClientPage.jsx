@@ -1,10 +1,12 @@
 "use client"
 import { useState, useEffect } from "react"
-import PostCard from "../../components/post-card"
-import { getPostsByCategory } from "../../lib/db"
+import PostCard from "@/components/post-card"
+import { getPostsByCategory } from "@/lib/db"
 import { Heart } from "lucide-react"
-import { generateSlug } from "../../lib/utils"
-import Header from "../../components/header" // Import Header
+import { generateSlug } from "@/lib/utils"
+import Header from "@/components/header"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function UKLifeClientPage() {
   const [posts, setPosts] = useState([])
@@ -32,30 +34,54 @@ export default function UKLifeClientPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header /> {/* Add Header here */}
-      {/* Header Section */}
-      <section className="bg-gradient-to-r from-secondary via-primary to-accent text-primary-foreground py-20 pt-32">
-        {" "}
-        {/* Added pt-32 for header clearance */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center animate-fade-in">
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-primary-foreground/20 backdrop-blur-sm rounded-full">
-                <Heart className="w-12 h-12" />
-              </div>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6">UK Life</h1>
-            <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
-              Welcome to my personal space where I share life experiences, thoughts, and moments that have shaped who I
-              am in the UK. Every story has a lesson, every moment has meaning.
+    <div className="min-h-screen flex flex-col bg-background theme-uk-life">
+      <Header />
+      {/* Hero Section - Redesigned to match the image */}
+      <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden pt-16 bg-background">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
+          {/* Left Content Area */}
+          <div className="text-foreground text-center md:text-left flex flex-col justify-center h-full">
+            <h1
+              className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-4 animate-fade-in"
+              style={{ animationDelay: "0.2s" }}
+            >
+              UK Life <br /> Adventures
+            </h1>
+            <p
+              className="text-lg md:text-xl text-muted-foreground mb-8 animate-fade-in"
+              style={{ animationDelay: "0.4s" }}
+            >
+              Discover personal stories, travel experiences, and insights into life in the United Kingdom. From bustling
+              cities to serene countryside, explore the charm and nuances of British living.
             </p>
+            <Link
+              href="#posts-section"
+              className="inline-block w-fit mx-auto md:mx-0 px-8 py-3 bg-primary text-primary-foreground rounded-md font-semibold hover:bg-primary-hover transition-colors duration-300 animate-slide-up"
+              style={{ animationDelay: "0.6s" }}
+            >
+              Read More
+            </Link>
+          </div>
+
+          {/* Right Image Area */}
+          <div className="hidden md:flex items-center justify-center h-full p-8">
+            <div
+              className="relative w-full h-full max-w-md max-h-[400px] lg:max-h-[500px] animate-scale-in"
+              style={{ animationDelay: "0.8s" }}
+            >
+              <Image
+                src="https://images.unsplash.com/photo-1506781961300-8d5676b7eb20?auto=format&fit=crop&w=600&h=800&q=80"
+                alt="UK Life Decorative"
+                fill
+                className="object-cover rounded-lg shadow-xl"
+                priority
+              />
+            </div>
           </div>
         </div>
       </section>
       {/* Posts Section - Grouped by Sub-topic */}
-      <section className="py-16 flex-grow">
+      <section id="posts-section" className="py-16 flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center h-64">

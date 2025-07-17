@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Beige & Natural Palette */
+    /* Beige & Natural Palette (Default) */
     --background: 30 20% 98%; /* Lightest beige */
     --foreground: 210 10% 20%; /* Dark charcoal */
 
@@ -73,6 +73,41 @@
     --secondary-hover: 0 0% 25%;
   }
 
+  /* UK Life Theme (Beige/Brown/Natural) - Refined */
+  .theme-uk-life {
+    --background: 30 20% 95%; /* Light beige for background */
+    --foreground: 28 35% 25%; /* Dark brown for text */
+
+    --primary: 28 35% 40%; /* Muted warm brown for buttons/accents */
+    --primary-foreground: 30 20% 98%; /* Light beige for button text */
+
+    --secondary: 15 50% 45%; /* Earthy terracotta (less used in this theme) */
+    --secondary-foreground: 30 20% 98%;
+
+    --accent: 80 30% 45%; /* Soft sage green (less used in this theme) */
+    --accent-foreground: 30 20% 98%;
+
+    --muted: 30 20% 90%; /* Slightly darker beige */
+    --muted-foreground: 28 35% 45%; /* Muted brown-grey for secondary text */
+
+    --border: 30 15% 80%; /* Soft, subtle border */
+    --input: 30 20% 98%;
+    --ring: 28 35% 40%;
+
+    --card: 30 20% 98%; /* Light beige for cards */
+    --card-foreground: 28 35% 25%; /* Dark brown for card text */
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 28 35% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Hover states for gradients */
+    --primary-hover: 28 35% 35%;
+    --secondary-hover: 15 50% 40%;
+  }
+
   html {
     scroll-behavior: smooth;
     /* Add scroll-padding-top to account for fixed header height */
@@ -123,18 +158,9 @@
     animation: bounceIn 1.2s ease-out forwards;
   }
 
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  /* New animation for side image */
+  .animate-scale-in {
+    animation: scaleIn 1.2s ease-out forwards;
   }
 }
 
@@ -173,6 +199,17 @@
     transform: scale(0.9);
   }
   100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
     opacity: 1;
     transform: scale(1);
   }
