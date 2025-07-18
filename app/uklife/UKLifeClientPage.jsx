@@ -8,7 +8,7 @@ import Header from "../../components/header"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "../../components/ui/button"
-import { useNotionPosts } from "../../hooks/use-notion-posts"
+import { useNotionPosts } from "../../hook/use-notion-posts"
 
 export default function UKLifeClientPage({ initialPosts, initialUniqueSubTopics }) {
   // Use the custom hook for real-time updates

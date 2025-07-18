@@ -1,5 +1,4 @@
 import { createPost } from "../../../../lib/db"
-import { generateSlug } from "../../../../lib/utils"
 import { NextResponse } from "next/server"
 
 export async function POST(request) {
