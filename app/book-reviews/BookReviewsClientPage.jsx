@@ -1,39 +1,36 @@
 "use client"
-import { useState } from "react" // Keep useState for internal component state if needed, but remove for data
+
+import { useEffect } from "react"
 import PostCard from "../../components/post-card"
-// Removed direct import of getPostsByCategory and getUniqueTags as data comes from props
-import { BookOpen } from "lucide-react"
+import { BookOpen, RefreshCw } from "lucide-react"
 import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header"
 import Image from "next/image"
+import { Button } from "../../components/ui/button"
+import { useNotionPosts } from "../../hooks/use-notion-posts"
 
 // Accept initialPosts and initialUniqueTags as props
 export default function BookReviewsClientPage({ initialPosts, initialUniqueTags }) {
-  const [posts, setPosts] = useState(initialPosts)
-  const [uniqueTags, setUniqueTags] = useState(initialUniqueTags)
-  const [loading, setLoading] = useState(false) // Set to false as data is already loaded
+  // Use the custom hook for real-time updates
+  const { data, loading, error, refresh } = useNotionPosts("/api/posts/book-reviews", {
+    posts: initialPosts,
+    uniqueTags: initialUniqueTags,
+  })
 
-  // Remove the useEffect that fetches data, as it's now done on the server
-  // useEffect(() => {
-  //   async function fetchPosts() {
-  //     setLoading(true)
-  //     const allPosts = await getPostsByCategory("book-reviews", 50)
-  //     console.log("Fetched book reviews:", allPosts)
+  const posts = data?.posts || initialPosts || []
+  const uniqueTags = data?.uniqueTags || initialUniqueTags || []
 
-  //     const tags = new Set()
-  //     allPosts.forEach((post) => {
-  //       if (post.tags) {
-  //         post.tags.forEach((tag) => tags.add(tag))
-  //       }
-  //     })
-  //     setUniqueTags(Array.from(tags).sort())
+  // Auto-refresh every 5 minutes to catch webhook updates
+  useEffect(() => {
+    const interval = setInterval(
+      () => {
+        refresh()
+      },
+      5 * 60 * 1000,
+    ) // 5 minutes
 
-  //     setPosts(allPosts)
-  //     console.log("Posts state updated:", allPosts.length, "posts")
-  //     setLoading(false)
-  //   }
-  //   fetchPosts()
-  // }, [])
+    return () => clearInterval(interval)
+  }, [refresh])
 
   const pinnedPosts = posts.filter((post) => post.pinned)
   const nonPinnedPosts = posts.filter((post) => !post.pinned)
@@ -44,6 +41,7 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
   return (
     <div className="min-h-screen flex flex-col bg-background theme-book-reviews">
       <Header />
+
       {/* Header Section */}
       <section className="relative bg-gradient-to-r from-accent via-primary to-secondary text-primary-foreground py-20 pt-32 overflow-hidden">
         <Image
@@ -61,18 +59,37 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
                 <BookOpen className="w-12 h-12" />
               </div>
             </div>
-
             <h1 className="text-4xl md:text-5xl font-serif font-bold mb-6">Book Reviews</h1>
-            <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
+            <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-6">
               Dive into my literary journey. From timeless classics to contemporary masterpieces, discover books that
               have shaped my perspective and might inspire yours.
             </p>
+            <Button
+              onClick={refresh}
+              variant="secondary"
+              disabled={loading}
+              className="animate-fade-in"
+              style={{ animationDelay: "0.5s" }}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+              Refresh Reviews
+            </Button>
           </div>
         </div>
       </section>
+
       {/* Posts Section - Grouped by Tag */}
       <section className="py-16 flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-8">
+              <p className="text-red-800">Error loading reviews: {error}</p>
+              <Button onClick={refresh} variant="outline" size="sm" className="mt-2 bg-transparent">
+                Try Again
+              </Button>
+            </div>
+          )}
+
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="loading-dots">
@@ -87,10 +104,11 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
               {/* Pinned Posts Section */}
               {pinnedPosts.length > 0 && (
                 <div id="pinned-reviews" className="mb-16 animate-slide-up pt-16 -mt-16">
-                  {" "}
-                  {/* Add ID and scroll offset */}
                   <div className="flex items-center justify-between mb-8">
                     <h2 className="text-3xl font-serif font-bold text-foreground">Pinned Reviews</h2>
+                    <span className="text-sm text-muted-foreground">
+                      {pinnedPosts.length} pinned review{pinnedPosts.length !== 1 ? "s" : ""}
+                    </span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {pinnedPosts.map((post, index) => (
@@ -108,7 +126,6 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
                   {uniqueTags.map((tag, blockIndex) => {
                     const postsForTag = nonPinnedPosts.filter((post) => post.tags && post.tags.includes(tag))
                     if (postsForTag.length === 0) return null
-
                     return (
                       <div
                         key={tag}
@@ -118,6 +135,9 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
                       >
                         <div className="flex items-center justify-between mb-8">
                           <h2 className="text-3xl font-serif font-bold text-foreground">#{tag}</h2>
+                          <span className="text-sm text-muted-foreground">
+                            {postsForTag.length} review{postsForTag.length !== 1 ? "s" : ""}
+                          </span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                           {postsForTag.map((post, postIndex) => (
@@ -138,9 +158,13 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
                 <div className="text-center py-16">
                   <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-xl font-serif font-semibold text-foreground mb-2">No book reviews yet</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground mb-4">
                     Check back soon for my latest book reviews and recommendations!
                   </p>
+                  <Button onClick={refresh} variant="outline">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Check for Updates
+                  </Button>
                 </div>
               )}
             </>
