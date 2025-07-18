@@ -7,7 +7,7 @@ import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header"
 import Image from "next/image"
 import { Button } from "../../components/ui/button"
-import { useNotionPosts } from "../../hook/use-notion-postssts"
+import { useNotionPosts } from "../../hook/use-notion-posts"
 
 // Accept initialPosts and initialUniqueTags as props
 export default function BookReviewsClientPage({ initialPosts, initialUniqueTags }) {
