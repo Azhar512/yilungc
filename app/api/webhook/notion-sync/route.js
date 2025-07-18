@@ -1,4 +1,4 @@
-import { Notion } from "@/lib/notion"
+import { Notion } from "../../../../lib/notion"
 import { extractPageId } from "../../../../lib/utils"
 import { NextResponse } from "next/server"
 
