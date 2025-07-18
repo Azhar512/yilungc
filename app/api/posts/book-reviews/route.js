@@ -3,14 +3,13 @@ import { Notion } from "../../../../lib/notion"
 
 export async function GET() {
   try {
-    // Query your Notion database
     const response = await Notion.databases.query({
       database_id: process.env.NOTION_DATABASE_ID,
       filter: {
         and: [
           {
             property: "Status",
-            status: {  // Changed from 'select' to 'status'
+            status: {  
               equals: "Ready for publish"
             }
           },
@@ -40,13 +39,12 @@ export async function GET() {
       },
       sorts: [
         {
-          property: "New post date", // Use the same property as in your db.js
+          property: "New post date", 
           direction: "descending"
         }
       ]
     })
 
-    // Transform Notion data to your expected format
     const posts = response.results.map(page => {
       const properties = page.properties
       
@@ -73,16 +71,13 @@ export async function GET() {
         content_type: properties["Content type"]?.select?.name || "",
         original_post_url: properties["Post URL"]?.url || "",
         excerpt: properties.Excerpt?.rich_text?.[0]?.plain_text || "",
-        // Add any other properties you need
       }
     })
 
-    // Extract unique tags from the book review multi-select property
     const uniqueTags = [
       ...new Set(
         posts.flatMap(post => 
           post.tags.filter(tag => 
-            // Filter for book review related tags
             ["讀書心得", "一人公司", "HerRead", "Taiwan and Transitional Justice", 
              "Parenting", "Business and Startups", "Life and Finance", 
              "Science Fiction", "Philosophy", "Fiction", "Classic", 
@@ -113,7 +108,6 @@ export async function GET() {
   }
 }
 
-// Helper function to generate slug (you might already have this in utils)
 function generateSlug(title) {
   return title
     .toLowerCase()

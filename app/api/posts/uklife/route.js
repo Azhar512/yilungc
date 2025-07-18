@@ -6,17 +6,15 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
     const limit = Number.parseInt(searchParams.get("limit")) || 50
-    const source = searchParams.get("source") || "notion" // Default to notion, but allow "db" for database
+    const source = searchParams.get("source") || "notion" 
 
     let posts = []
     let uniqueSubTopics = []
 
     if (source === "db") {
-      // Use existing database approach
       posts = await getPostsByCategory("uklife", limit)
       uniqueSubTopics = await getUniqueSubTopics("uklife")
     } else {
-      // Use Notion approach
       const response = await Notion.databases.query({
         database_id: process.env.NOTION_DATABASE_ID,
         filter: {
@@ -32,11 +30,11 @@ export async function GET(request) {
                 {
                   property: "Category",
                   select: {
-                    equals: "英國生活" // UK Life in Chinese
+                    equals: "英國生活" 
                   }
                 },
                 {
-                  property: "英國房產", // UK Property column
+                  property: "英國房產", 
                   select: {
                     is_not_empty: true
                   }
@@ -54,7 +52,6 @@ export async function GET(request) {
         page_size: limit
       })
 
-      // Transform Notion data to match your existing post structure
       posts = response.results.map(page => {
         const properties = page.properties
         
@@ -84,14 +81,12 @@ export async function GET(request) {
           author: properties.Author?.rich_text?.[0]?.plain_text || "Admin",
           category: "uklife",
           reading_time: estimateReadingTime(properties.Content?.rich_text?.[0]?.plain_text || ""),
-          // Add Notion-specific fields
           notion_id: page.id,
           notion_url: page.url,
           source: "notion"
         }
       })
 
-      // Extract unique subtopics
       uniqueSubTopics = [...new Set(posts.map(post => post.subTopic))].filter(Boolean)
     }
 
@@ -108,7 +103,6 @@ export async function GET(request) {
   } catch (error) {
     console.error("Error fetching UK life posts:", error)
     
-    // Fallback to database if Notion fails
     if (source === "notion") {
       try {
         console.log("Notion failed, falling back to database...")
@@ -140,7 +134,6 @@ export async function GET(request) {
   }
 }
 
-// Helper functions
 function generateSlug(title) {
   return title
     .toLowerCase()
