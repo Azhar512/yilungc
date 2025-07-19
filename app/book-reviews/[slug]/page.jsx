@@ -1,16 +1,14 @@
-import { getPostBySlug } from "../../../lib/db" // Corrected import
+import { getPostBySlug } from "../../../lib/db" 
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Header from "../../../components/header"
 import { Calendar, User } from "lucide-react"
-import { formatDate, calculateReadingTime } from "../../../lib/utils" // Corrected import
+import { formatDate, calculateReadingTime } from "../../../lib/utils" 
 
 export async function generateStaticParams() {
-  // This function is still needed for static generation, but it will fetch all relevant slugs
-  // For simplicity, we'll fetch all posts and map their slugs.
-  // In a very large database, you might need a more optimized approach.
+  
   const { getPostsByCategory } = await import("../../../lib/db")
-  const posts = await getPostsByCategory("book-reviews", 100) // Fetch more posts for static generation
+  const posts = await getPostsByCategory("book-reviews", 100) 
   return posts.map((post) => ({
     slug: post.slug,
   }))
@@ -18,7 +16,7 @@ export async function generateStaticParams() {
 
 export default async function BookReviewDetailPage({ params }) {
   const { slug } = params
-  const post = await getPostBySlug("book-reviews", slug) // Use the new getPostBySlug
+  const post = await getPostBySlug("book-reviews", slug) 
 
   if (!post) {
     notFound()
@@ -48,14 +46,14 @@ export default async function BookReviewDetailPage({ params }) {
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              <span>{formatDate(post.published_at)}</span> {/* Use formatDate */}
+              <span>{formatDate(post.published_at)}</span> {}
             </div>
             <div className="flex items-center gap-1">
-              <span>{calculateReadingTime(post.content)}</span> {/* Use calculateReadingTime */}
+              <span>{calculateReadingTime(post.content)}</span> {}
             </div>
           </div>
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          {/* You would typically fetch the full Notion page content here using Notion API */}
+          {}
           <p className="mt-8 text-muted-foreground">
             This is a placeholder for the full post content. You would integrate Notion's block API here to render the
             full page.

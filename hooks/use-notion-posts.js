@@ -13,7 +13,7 @@ export function useNotionPosts(apiEndpoint, initialData = null) {
       setError(null)
 
       const response = await fetch(apiEndpoint, {
-        cache: "no-store", // Ensure fresh data
+        cache: "no-store", 
       })
 
       if (!response.ok) {

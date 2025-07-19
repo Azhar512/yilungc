@@ -10,11 +10,11 @@ export default function NotionDataPage() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
 
-  // This would typically fetch from your database where you store the webhook data
+  
   const fetchPosts = async () => {
     setLoading(true)
     try {
-      // Replace with your actual data fetching logic
+      
       const response = await fetch("/api/notion-posts")
       const data = await response.json()
       setPosts(data.posts || [])

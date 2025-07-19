@@ -2,7 +2,7 @@ import { Notion } from "../../../../lib/notion"
 import { extractPageId } from "../../../../lib/utils"
 import { NextResponse } from "next/server"
 
-// Assumes this is how you extract select options from Notion
+
 function extractNotionSelect(property) {
   if (!property || property.type !== "select") {
     return null
@@ -14,7 +14,7 @@ export async function POST(req) {
   try {
     const body = await req.json()
 
-    // Check if the event is a page update
+    
     if (body.object !== "page") {
       return NextResponse.json({ message: "Not a page update" }, { status: 200 })
     }
@@ -24,13 +24,13 @@ export async function POST(req) {
       return NextResponse.json({ message: "Invalid page ID" }, { status: 400 })
     }
 
-    // Extract properties from the Notion webhook payload
+    
     const status = body.properties?.["Status"]?.select?.name
     const category = body.properties?.["Category"]?.select?.name
-    const label = extractNotionSelect(body.properties?.["英國房產"]) // Use the actual Notion column name
+    const label = extractNotionSelect(body.properties?.["英國房產"]) 
     const isPublished = body.properties?.["發佈"]?.checkbox || false
 
-    // Define arrays for different categories
+    
     const ukLifeLabels = [
       "倫敦生活",
       "倫敦育兒",
@@ -51,17 +51,16 @@ export async function POST(req) {
       "Oversea family",
       "Being a Mother",
       "Personal Thoughts",
-      // Add your Notion labels here:
-      "看房紀錄", // Added from your screenshot
-      "居家裝修", // Added from your screenshot
-      "房產知識", // Added from your screenshot
-      // Add any other specific Chinese labels you use for UK Life posts
+      
+      "看房紀錄", 
+      "居家裝修", 
+      "房產知識", 
     ]
 
     const investmentLabels = ["房地產投資", "海外房產", "被動收入"]
 
-    // Determine the category based on the label
-    let calculatedCategory = category // Default to the existing category
+    
+    let calculatedCategory = category 
 
     if (ukLifeLabels.includes(label)) {
       calculatedCategory = "英國生活"
@@ -69,7 +68,7 @@ export async function POST(req) {
       calculatedCategory = "房地產投資"
     }
 
-    // Update the page in Notion if necessary
+    
     if (status === "發佈" && isPublished && (ukLifeLabels.includes(label) || investmentLabels.includes(label))) {
       try {
         await Notion.pages.update({

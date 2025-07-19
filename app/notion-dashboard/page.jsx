@@ -14,11 +14,9 @@ export default function NotionDashboard() {
   const testWebhook = async () => {
     setSyncStatus("testing")
     try {
-      // This endpoint is for testing the *revalidation* logic, not the Make.com webhook itself.
-      // The Make.com webhook is triggered by Notion changes or a manual run in Make.com.
-      // To test the Make.com webhook, you'd typically run the Make.com scenario manually.
+      
       const response = await fetch("/api/posts/book-reviews", {
-        // Fetching data to see if it updates
+        
         method: "GET",
       })
       const data = await response.json()

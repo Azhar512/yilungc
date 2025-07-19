@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { getPostsByCategory, getUniqueTags, getUniqueSubTopics } from "../../../lib/db"
 
-// Add this line to fix the dynamic server usage error
+
 export const dynamic = 'force-dynamic'
 
 export async function GET(request) {
@@ -21,7 +21,7 @@ export async function GET(request) {
       posts = await getPostsByCategory("uklife", limit)
       uniqueSubTopics = await getUniqueSubTopics("uklife")
     } else {
-      // If no specific category, you might want to fetch all or return an error
+      
       return NextResponse.json({ error: "Category not specified or invalid" }, { status: 400 })
     }
 

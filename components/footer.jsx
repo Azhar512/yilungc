@@ -5,9 +5,9 @@ export default function Footer() {
   const socialLinks = [
     { name: "Facebook", href: "https://www.facebook.com/MyLittleLovelyRosaIG", icon: Facebook },
     { name: "Instagram", href: "https://www.instagram.com/dr_yi_lung/", icon: Instagram },
-    { name: "X", href: "#", icon: XIcon }, // Placeholder for X (Twitter)
-    { name: "GitHub", href: "#", icon: Github }, // Placeholder
-    { name: "LinkedIn", href: "#", icon: Linkedin }, // Placeholder
+    { name: "X", href: "#", icon: XIcon }, 
+    { name: "GitHub", href: "#", icon: Github }, 
+    { name: "LinkedIn", href: "#", icon: Linkedin }, 
     { name: "Email", href: "mailto:hello@yilungc.com", icon: Mail },
   ]
 
@@ -15,7 +15,7 @@ export default function Footer() {
     <footer className="bg-foreground text-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand */}
+          {}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -29,7 +29,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Quick Links</h3>
             <div className="space-y-2">
@@ -54,7 +54,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Social Links */}
+          {}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Connect</h3>
             <div className="flex space-x-4">

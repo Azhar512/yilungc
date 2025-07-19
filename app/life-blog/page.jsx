@@ -8,7 +8,7 @@ export const metadata = {
     "Personal stories, experiences, and reflections on life. Join me as I share my journey of growth, challenges, and discoveries.",
 }
 
-// Function to safely serialize post data
+
 function serializePost(post) {
   return {
     id: post.id,
@@ -24,7 +24,7 @@ function serializePost(post) {
     updatedAt: post.updatedAt ? new Date(post.updatedAt).toISOString() : null,
     tags: Array.isArray(post.tags) ? post.tags : [],
     pinned: Boolean(post.pinned),
-    // Add any other fields your posts might have, ensuring they're serializable
+    
   }
 }
 
@@ -32,12 +32,12 @@ export default async function LifeBlogPage() {
   try {
     const rawPosts = await getPostsByCategory("life-blog", 20)
     
-    // Serialize all posts to ensure they're safe for client components
+    
     const posts = rawPosts.map(serializePost)
 
     return (
       <div className="min-h-screen bg-background">
-        {/* Header Section */}
+        {}
         <section className="bg-gradient-to-r from-secondary via-primary to-accent text-primary-foreground py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center animate-fade-in">
@@ -56,7 +56,7 @@ export default async function LifeBlogPage() {
           </div>
         </section>
 
-        {/* Posts Section */}
+        {}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {posts.length > 0 ? (

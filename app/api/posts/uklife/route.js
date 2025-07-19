@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { getPostsByCategory, getUniqueSubTopics } from "../../../../lib/db"
 
-// Add this line to fix the dynamic server usage error
+
 export const dynamic = 'force-dynamic'
 
 export async function GET(request) {

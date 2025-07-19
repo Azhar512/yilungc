@@ -7,11 +7,11 @@ import Header from "../../components/header"
 import Image from "next/image"
 import { Button } from "../../components/ui/button"
 import { useNotionPosts } from "../../hooks/use-notion-posts"
-import { generateSlug } from "../../lib/utils" // Corrected import path
+import { generateSlug } from "../../lib/utils" 
 
-// Accept initialPosts and initialUniqueTags as props
+
 export default function BookReviewsClientPage({ initialPosts, initialUniqueTags }) {
-  // Use the custom hook for real-time updates
+  
   const { data, loading, error, refresh } = useNotionPosts("/api/posts/book-reviews", {
     posts: initialPosts,
     uniqueTags: initialUniqueTags,
@@ -20,14 +20,14 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
   const posts = data?.posts || initialPosts || []
   const uniqueTags = data?.uniqueTags || initialUniqueTags || []
 
-  // Auto-refresh every 5 minutes to catch webhook updates
+  
   useEffect(() => {
     const interval = setInterval(
       () => {
         refresh()
       },
       5 * 60 * 1000,
-    ) // 5 minutes
+    ) 
 
     return () => clearInterval(interval)
   }, [refresh])
@@ -35,17 +35,17 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
   const pinnedPosts = posts.filter((post) => post.pinned)
   const nonPinnedPosts = posts.filter((post) => !post.pinned)
 
-  // Sort non-pinned posts by newest first
+  
   nonPinnedPosts.sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
 
   return (
     <div className="min-h-screen flex flex-col bg-background theme-book-reviews">
       <Header />
 
-      {/* Header Section */}
+      {}
       <section className="relative bg-gradient-to-r from-accent via-primary to-secondary text-primary-foreground py-20 pt-32 overflow-hidden">
         <Image
-          src="/images/bookreview.png" // Corrected image path
+          src="/images/bookreview.png" 
           alt="Book Reviews Header"
           fill
           className="object-cover absolute inset-0 opacity-70"
@@ -78,7 +78,7 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
         </div>
       </section>
 
-      {/* Posts Section - Grouped by Tag */}
+      {}
       <section className="py-16 flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {error && (
@@ -101,7 +101,7 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
             </div>
           ) : (
             <>
-              {/* Pinned Posts Section */}
+              {}
               {pinnedPosts.length > 0 && (
                 <div id="pinned-reviews" className="mb-16 animate-slide-up pt-16 -mt-16">
                   <div className="flex items-center justify-between mb-8">
@@ -120,7 +120,7 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
                 </div>
               )}
 
-              {/* Dynamic Tag Sections */}
+              {}
               {uniqueTags.length > 0 ? (
                 <div className="space-y-16">
                   {uniqueTags.map((tag, blockIndex) => {
@@ -129,8 +129,8 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
                     return (
                       <div
                         key={tag}
-                        id={generateSlug(tag)} // Add ID for scrolling
-                        className="animate-slide-up pt-16 -mt-16" // Add scroll offset
+                        id={generateSlug(tag)} 
+                        className="animate-slide-up pt-16 -mt-16" 
                         style={{ animationDelay: `${blockIndex * 0.1}s` }}
                       >
                         <div className="flex items-center justify-between mb-8">

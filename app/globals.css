@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    /* Beige & Natural Palette (Default) */
-    --background: 30 20% 98%; /* Lightest beige */
-    --foreground: 210 10% 20%; /* Dark charcoal */
-    --primary: 28 35% 40%; /* Muted warm brown */
+    
+    --background: 30 20% 98%; 
+    --foreground: 210 10% 20%; 
+    --primary: 28 35% 40%; 
     --primary-foreground: 30 20% 98%;
-    --secondary: 15 50% 45%; /* Earthy terracotta */
+    --secondary: 15 50% 45%; 
     --secondary-foreground: 30 20% 98%;
-    --accent: 80 30% 45%; /* Soft sage green */
+    --accent: 80 30% 45%; 
     --accent-foreground: 30 20% 98%;
-    --muted: 30 20% 90%; /* Slightly darker beige */
-    --muted-foreground: 210 10% 45%; /* Muted grey text */
-    --border: 30 15% 80%; /* Soft, subtle border */
+    --muted: 30 20% 90%; 
+    --muted-foreground: 210 10% 45%; 
+    --border: 30 15% 80%;
     --input: 30 20% 98%;
     --ring: 28 35% 40%;
-    --card: 0 0% 100%; /* White for cards */
+    --card: 0 0% 100%; 
     --card-foreground: 210 10% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 210 10% 20%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    /* Hover states for gradients (slightly darker versions of primary/secondary) */
+    
     --primary-hover: 28 35% 35%;
     --secondary-hover: 15 50% 40%;
   }
-  /* Book Reviews Theme (Black/White/Grey) */
+  
   .theme-book-reviews {
-    --background: 0 0% 10%; /* Dark background */
-    --foreground: 0 0% 90%; /* Light text */
-    --primary: 0 0% 50%; /* Medium grey */
+    --background: 0 0% 10%; 
+    --foreground: 0 0% 90%; 
+    --primary: 0 0% 50%; 
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 30%; /* Darker grey */
+    --secondary: 0 0% 30%; 
     --secondary-foreground: 0 0% 98%;
-    --accent: 0 0% 70%; /* Lighter grey for accents */
+    --accent: 0 0% 70%; 
     --accent-foreground: 0 0% 10%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 60%;
@@ -49,43 +49,43 @@
     --popover-foreground: 0 0% 90%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    /* Hover states for gradients (slightly darker versions of primary/secondary) */
+    
     --primary-hover: 0 0% 45%;
     --secondary-hover: 0 0% 25%;
   }
-  /* UK Life Theme (Very Light Warm Beige/Cream) */
+  
   .theme-uk-life {
-    --background: 30 20% 95%; /* Very light, warm beige/cream */
-    --foreground: 28 35% 20%; /* Dark brown for text, for good contrast */
-    --primary: 28 35% 40%; /* Muted warm brown for buttons/accents */
-    --primary-foreground: 30 20% 98%; /* Light beige for button text */
-    --secondary: 15 50% 45%; /* Earthy terracotta (less used in this theme) */
+    --background: 30 20% 95%; 
+    --foreground: 28 35% 20%; 
+    --primary: 28 35% 40%; 
+    --primary-foreground: 30 20% 98%; 
+    --secondary: 15 50% 45%; 
     --secondary-foreground: 30 20% 98%;
-    --accent: 80 30% 45%; /* Soft sage green (less used in this theme) */
+    --accent: 80 30% 45%; 
     --accent-foreground: 30 20% 98%;
-    --muted: 30 20% 90%; /* Slightly darker than background for muted elements */
-    --muted-foreground: 28 35% 35%; /* Muted brown-grey for secondary text */
-    --border: 30 15% 80%; /* Soft, subtle border */
+    --muted: 30 20% 90%; 
+    --muted-foreground: 28 35% 35%; 
+    --border: 30 15% 80%; 
     --input: 30 20% 95%;
     --ring: 28 35% 40%;
-    --card: 30 20% 98%; /* Lighter than background for cards */
-    --card-foreground: 28 35% 20%; /* Dark brown for card text */
+    --card: 30 20% 98%; 
+    --card-foreground: 28 35% 20%; 
     --popover: 0 0% 100%;
     --popover-foreground: 28 35% 20%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    /* Hover states for gradients */
+    
     --primary-hover: 28 35% 35%;
     --secondary-hover: 15 50% 40%;
-    /* Removed gradient variables as per new image */
+    
   }
   html {
     scroll-behavior: smooth;
-    /* Add scroll-padding-top to account for fixed header height */
-    scroll-padding-top: 64px; /* Adjust this value if your header height changes */
+    
+    scroll-padding-top: 64px; 
   }
   body {
-    @apply text-foreground font-sans; /* Apply sans font by default */
+    @apply text-foreground font-sans; 
   }
   h1,
   h2,
@@ -93,7 +93,7 @@
   h4,
   h5,
   h6 {
-    @apply font-serif; /* Apply serif font to headings */
+    @apply font-serif; 
   }
 }
 @layer components {
@@ -109,7 +109,7 @@
   .card-hover {
     @apply transform transition-all duration-300 hover:scale-105 hover:shadow-xl;
   }
-  /* Enhanced Animations */
+  
   .animate-fade-in {
     animation: fadeIn 0.8s ease-out forwards;
   }
@@ -119,16 +119,16 @@
   .animate-bounce-in {
     animation: bounceIn 1.2s ease-out forwards;
   }
-  /* New animation for side image */
+  
   .animate-scale-in {
     animation: scaleIn 1.2s ease-out forwards;
   }
   .uk-life-gradient-text {
     @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
   }
-  /* Removed .uk-life-hero-background-gradient as per new image */
+  
 }
-/* Animations */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -180,7 +180,7 @@
   }
 }
 
-/* Custom scrollbar */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -195,7 +195,7 @@
   background: linear-gradient(135deg, hsl(var(--primary-hover)) 0%, hsl(var(--secondary-hover)) 100%);
 }
 
-/* Loading animation */
+
 .loading-dots {
   display: inline-block;
   position: relative;

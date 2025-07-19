@@ -1,7 +1,7 @@
 import BookReviewsClientPage from "./BookReviewsClientPage"
 import { getPostsByCategory, getUniqueTags } from "../../lib/db"
 
-export const revalidate = 300 // Revalidate every 5 minutes
+export const revalidate = 300 
 
 export default async function BookReviewsPage() {
   const initialPosts = await getPostsByCategory("book-reviews")
