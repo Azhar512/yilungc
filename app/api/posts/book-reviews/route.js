@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server"
 import { getPostsByCategory, getUniqueTags } from "../../../../lib/db"
 
+// Add this line to fix the dynamic server usage error
+export const dynamic = 'force-dynamic'
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
     const limit = Number.parseInt(searchParams.get("limit")) || 50
 
     const posts = await getPostsByCategory("book-reviews", limit)
-    const uniqueTags = await getUniqueTags("book-reviews") // Pass category if needed for filtering tags
+    const uniqueTags = await getUniqueTags("book-reviews")
 
     return NextResponse.json({
       success: true,
