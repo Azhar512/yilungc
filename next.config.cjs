@@ -15,15 +15,15 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "i.postimg.cc", // For your custom images
+        hostname: "i.postimg.cc",
       },
       {
         protocol: "https",
-        hostname: "www.notion.so", // For Notion's public URLs if any
+        hostname: "www.notion.so",
       },
     ],
     unoptimized: true,
   },
-}
+};
 
-export default nextConfig
+module.exports = nextConfig;
