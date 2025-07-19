@@ -3,12 +3,20 @@
 import { useEffect } from "react"
 import PostCard from "../../components/post-card"
 import { Heart, RefreshCw } from "lucide-react"
-import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "../../components/ui/button"
-import { useNotionPosts } from "../../hook/use-notion-posts"
+import { useNotionPosts } from "../../hooks/use-notion-posts" // Corrected import path
+
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric characters except spaces and hyphens
+    .trim() // Trim whitespace from both ends
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with a single hyphen
+}
 
 export default function UKLifeClientPage({ initialPosts, initialUniqueSubTopics }) {
   // Use the custom hook for real-time updates
@@ -84,7 +92,7 @@ export default function UKLifeClientPage({ initialPosts, initialUniqueSubTopics 
               style={{ animationDelay: "0.8s" }}
             >
               <Image
-                src="https://i.postimg.cc/rmMt9qwR/uklife1.png"
+                src="/images/uklife1.png" // Corrected image path
                 alt="UK Life Decorative"
                 fill
                 className="object-cover rounded-lg shadow-2xl group-hover:shadow-3xl transition-all duration-300 group-hover:scale-105"

@@ -1,128 +1,82 @@
-import Image from "next/image"
-import Link from "next/link"
+import { getPostsByCategory } from "../../../lib/db"
 import { notFound } from "next/navigation"
-import { getPostBySlug } from "../../../lib/db"
-import { formatDate, calculateReadingTime } from "../../../lib/utils"
-import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react"
+import Image from "next/image"
+import Header from "../../../components/header"
+import { Calendar, User } from "lucide-react"
 
-export async function generateMetadata({ params }) {
-  try {
-    const post = await getPostBySlug(params.slug)
-
-    return {
-      title: `${post.title} - Book Review | yilungc`,
-      description: post.excerpt,
-      openGraph: {
-        title: post.title,
-        description: post.excerpt,
-        images: [post.featured_image],
-      },
-    }
-  } catch (error) {
-    return {
-      title: "Book Review Not Found | yilungc",
-    }
-  }
+// Re-use the generateSlug function for consistency
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
 }
 
-export default async function BookReviewPost({ params }) {
-  try {
-    const post = await getPostBySlug(params.slug)
+export async function generateStaticParams() {
+  const posts = await getPostsByCategory("book-reviews", 100) // Fetch more posts for static generation
+  return posts.map((post) => ({
+    slug: post.slug,
+  }))
+}
 
-    return (
-      <article className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative h-96 md:h-[500px] overflow-hidden">
-          <Image
-            src={post.featured_image || "/placeholder.svg?height=500&width=1200"}
-            alt={post.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-foreground/20 to-transparent" />
+export default async function BookReviewDetailPage({ params }) {
+  const { slug } = params
+  const posts = await getPostsByCategory("book-reviews", 100) // Fetch all posts to find the matching one
+  const post = posts.find((p) => p.slug === slug)
 
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <div className="max-w-4xl mx-auto">
-              <Link
-                href="/book-reviews"
-                className="inline-flex items-center space-x-2 text-background/80 hover:text-background mb-4 transition-colors duration-200"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back to Book Reviews</span>
-              </Link>
-
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="px-3 py-1 bg-accent/80 text-primary-foreground text-sm font-medium rounded-full backdrop-blur-sm">
-                  Book Review
-                </span>
-              </div>
-
-              <h1 className="text-3xl md:text-5xl font-serif font-bold text-background mb-4 leading-tight">
-                {post.title}
-              </h1>
-
-              <div className="flex items-center space-x-6 text-background/90">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>{formatDate(post.published_at)}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4" />
-                  <span>{calculateReadingTime(post.content)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Content Section */}
-        <section className="py-16">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="prose prose-lg max-w-none">
-              <div className="text-xl text-muted-foreground mb-8 font-medium leading-relaxed">{post.excerpt}</div>
-
-              <div
-                className="prose-headings:font-serif prose-headings:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground"
-                dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, "<br />") }}
-              />
-            </div>
-
-            {/* Tags */}
-            {post.tags && post.tags.length > 0 && (
-              <div className="mt-12 pt-8 border-t border-border">
-                <div className="flex items-center space-x-2 mb-4">
-                  <Tag className="w-5 h-5 text-muted-foreground" />
-                  <span className="font-medium text-foreground">Tags</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full hover:bg-accent/20 transition-colors duration-200"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Navigation */}
-            <div className="mt-12 pt-8 border-t border-border">
-              <Link
-                href="/book-reviews"
-                className="inline-flex items-center space-x-2 text-accent hover:text-primary font-medium group"
-              >
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
-                <span>Back to all book reviews</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </article>
-    )
-  } catch (error) {
+  if (!post) {
     notFound()
   }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background theme-book-reviews">
+      <Header />
+      <main className="flex-grow container mx-auto px-4 py-8 md:py-12 lg:py-16 max-w-3xl">
+        <article className="prose prose-lg mx-auto">
+          {post.featured_image && post.featured_image !== "/placeholder.png?height=400&width=600" && (
+            <div className="relative w-full h-64 md:h-80 lg:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
+              <Image
+                src={post.featured_image || "/placeholder.png"}
+                alt={post.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
+          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">{post.title}</h1>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-8">
+            <div className="flex items-center gap-1">
+              <User className="h-4 w-4" />
+              <span>{post.author}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              <span>{new Date(post.published_at).toLocaleDateString()}</span>
+            </div>
+          </div>
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          {/* You would typically fetch the full Notion page content here using Notion API */}
+          <p className="mt-8 text-muted-foreground">
+            This is a placeholder for the full post content. You would integrate Notion's block API here to render the
+            full page.
+          </p>
+          {post.notion_url && (
+            <p className="mt-4">
+              <a
+                href={post.notion_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                View on Notion
+              </a>
+            </p>
+          )}
+        </article>
+      </main>
+    </div>
+  )
 }

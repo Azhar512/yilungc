@@ -3,11 +3,19 @@
 import { useEffect } from "react"
 import PostCard from "../../components/post-card"
 import { BookOpen, RefreshCw } from "lucide-react"
-import { generateSlug } from "../../lib/utils"
 import Header from "../../components/header"
 import Image from "next/image"
 import { Button } from "../../components/ui/button"
-import { useNotionPosts } from "../../hook/use-notion-posts"
+import { useNotionPosts } from "../../hooks/use-notion-posts" // Corrected import path
+
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric characters except spaces and hyphens
+    .trim() // Trim whitespace from both ends
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with a single hyphen
+}
 
 // Accept initialPosts and initialUniqueTags as props
 export default function BookReviewsClientPage({ initialPosts, initialUniqueTags }) {
@@ -45,7 +53,7 @@ export default function BookReviewsClientPage({ initialPosts, initialUniqueTags 
       {/* Header Section */}
       <section className="relative bg-gradient-to-r from-accent via-primary to-secondary text-primary-foreground py-20 pt-32 overflow-hidden">
         <Image
-          src="https://i.postimg.cc/BvxKDj4G/bookreview.png"
+          src="/images/bookreview.png" // Corrected image path
           alt="Book Reviews Header"
           fill
           className="object-cover absolute inset-0 opacity-70"

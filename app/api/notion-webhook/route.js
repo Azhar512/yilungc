@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { revalidatePath } from "next/cache"
-import { saveNotionPost } from "../../../lib/db" // Assuming you want to save to local cache
+import { saveNotionPost } from "../../../lib/server-actions" // Corrected import path
 
 export async function POST(request) {
   try {
@@ -22,7 +22,7 @@ export async function POST(request) {
       photoUrl:
         notionData.properties?.["Photo URL"]?.files?.[0]?.file?.url ||
         notionData.properties?.["Photo URL"]?.files?.[0]?.external?.url ||
-        "/placeholder.svg?height=400&width=600", // Robust image URL
+        "/placeholder.png?height=400&width=600", // Robust image URL
       platform: notionData.properties?.Platform?.select?.name || "",
       contentType: notionData.properties?.["Content type"]?.select?.name || "",
       owner: notionData.properties?.Owner?.rich_text?.[0]?.plain_text || "",

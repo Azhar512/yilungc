@@ -1,15 +1,11 @@
 import BookReviewsClientPage from "./BookReviewsClientPage"
-import { getPostsByCategory, getUniqueTags } from "../../lib/db" // Import getUniqueTags
+import { getPostsByCategory, getUniqueTags } from "../../lib/db"
 
-export const metadata = {
-  title: "Book Reviews - yilungc",
-  description:
-    "Discover my thoughts on the latest books across various genres. From fiction to non-fiction, find your next great read.",
-}
+export const revalidate = 300 // Revalidate every 5 minutes
 
 export default async function BookReviewsPage() {
-  const posts = await getPostsByCategory("book-reviews", 50)
-  const uniqueTags = await getUniqueTags("book-reviews") // Fetch unique tags on the server
+  const initialPosts = await getPostsByCategory("book-reviews")
+  const initialUniqueTags = await getUniqueTags("book-reviews")
 
-  return <BookReviewsClientPage initialPosts={posts} initialUniqueTags={uniqueTags} />
+  return <BookReviewsClientPage initialPosts={initialPosts} initialUniqueTags={initialUniqueTags} />
 }

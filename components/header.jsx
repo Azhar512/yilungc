@@ -1,11 +1,12 @@
 "use client"
+
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, XIcon, Search } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { generateSlug } from "../lib/utils"
+import { generateSlug } from "../lib/db" // Corrected import path for generateSlug
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
-import SearchOverlay from "./search-overlay" // Corrected import path: now relative to components/
+import SearchOverlay from "./search-overlay"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -13,11 +14,9 @@ export default function Header() {
   const [navCategories, setNavCategories] = useState([])
   const [openDropdown, setOpenDropdown] = useState(null) // State to control which dropdown is open
   const pathname = usePathname()
-
   const isUKLifePage = pathname.startsWith("/uklife")
   const isBookReviewsPage = pathname.startsWith("/book-reviews")
   const isHomePage = pathname === "/"
-
   // Define the new category structure for the header
   const ukLifeHeaderCategories = [
     {
@@ -53,7 +52,6 @@ export default function Header() {
       ],
     },
   ]
-
   // For Book Reviews, these are now direct links to sections (tags)
   const bookReviewHeaderCategories = [
     { name: "HerRead", slug: "herread" },
@@ -65,7 +63,6 @@ export default function Header() {
     { name: "Novel and Bio", slug: "novel-and-bio" },
     { name: "Reading List", slug: "reading-list" },
   ]
-
   useEffect(() => {
     if (isUKLifePage) {
       setNavCategories(ukLifeHeaderCategories)
@@ -75,9 +72,7 @@ export default function Header() {
       setNavCategories([]) // Clear categories if on homepage
     }
   }, [pathname, isUKLifePage, isBookReviewsPage])
-
   const baseHref = isUKLifePage ? "/uklife#" : "/book-reviews#"
-
   return (
     <>
       <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -90,7 +85,6 @@ export default function Header() {
               </div>
               <span className="font-serif text-xl font-bold text-foreground">yilungc</span>
             </Link>
-
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
               {isHomePage ? (
@@ -163,7 +157,6 @@ export default function Header() {
                 <Search className="w-5 h-5 text-foreground" />
               </button>
             </nav>
-
             {/* Mobile menu button */}
             <div className="flex items-center md:hidden">
               <button
@@ -182,7 +175,6 @@ export default function Header() {
               </button>
             </div>
           </div>
-
           {/* Mobile Navigation */}
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-border/50 animate-in slide-in-from-top duration-200 max-h-[50vh] overflow-y-auto">
