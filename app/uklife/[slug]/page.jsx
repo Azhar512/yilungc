@@ -10,22 +10,22 @@ export async function generateStaticParams() {
   // For simplicity, we'll fetch all posts and map their slugs.
   // In a very large database, you might need a more optimized approach.
   const { getPostsByCategory } = await import("../../../lib/db")
-  const posts = await getPostsByCategory("book-reviews", 100) // Fetch more posts for static generation
+  const posts = await getPostsByCategory("uklife", 100) // Fetch more posts for static generation
   return posts.map((post) => ({
     slug: post.slug,
   }))
 }
 
-export default async function BookReviewDetailPage({ params }) {
+export default async function UKLifeDetailPage({ params }) {
   const { slug } = params
-  const post = await getPostBySlug("book-reviews", slug) // Use the new getPostBySlug
+  const post = await getPostBySlug("uklife", slug) // Use the new getPostBySlug
 
   if (!post) {
     notFound()
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background theme-book-reviews">
+    <div className="min-h-screen flex flex-col bg-background theme-uk-life">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12 lg:py-16 max-w-3xl">
         <article className="prose prose-lg mx-auto">
