@@ -110,7 +110,7 @@ export default function NotionDashboard() {
                   2. **HTTP Module (Action):** "Make a request"
                   <br />
                   &nbsp;&nbsp;&nbsp;&nbsp;**URL:**{" "}
-                  {typeof window !== "undefined" ? window.location.origin : "https://yoursite.com"}
+                  {typeof window !== "undefined" ? window.location.origin : "https://yilungc-gid8.vercel.app/"}
                   /api/notion-webhook
                   <br />
                   &nbsp;&nbsp;&nbsp;&nbsp;**Method:** POST
