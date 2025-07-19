@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, XIcon, Search } from "lucide-react"
 import { usePathname } from "next/navigation"
-import { generateSlug } from "../lib/db" // Corrected import path for generateSlug
+import { generateSlug } from "../lib/utils" // Corrected import path for generateSlug
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
 import SearchOverlay from "./search-overlay"
 

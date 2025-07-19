@@ -6,16 +6,8 @@ import { BookOpen, RefreshCw } from "lucide-react"
 import Header from "../../components/header"
 import Image from "next/image"
 import { Button } from "../../components/ui/button"
-import { useNotionPosts } from "../../hooks/use-notion-posts" // Corrected import path
-
-function generateSlug(title) {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric characters except spaces and hyphens
-    .trim() // Trim whitespace from both ends
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with a single hyphen
-}
+import { useNotionPosts } from "../../hooks/use-notion-posts"
+import { generateSlug } from "../../lib/utils" // Corrected import path
 
 // Accept initialPosts and initialUniqueTags as props
 export default function BookReviewsClientPage({ initialPosts, initialUniqueTags }) {
