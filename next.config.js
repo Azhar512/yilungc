@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -7,18 +8,22 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ["placeholder.svg", "images.unsplash.com"],
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'https',
+        hostname: 'prod-files-secure.s3.us-west-2.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.postimg.cc', // For your custom images
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.notion.so', // For Notion's public URLs if any
       },
     ],
     unoptimized: true,
   },
-  experimental: {
-    optimizeCss: true,
-  },
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;
