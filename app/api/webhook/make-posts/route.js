@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server"
-import { updatePostsCache, generateSlug } from "../../../lib/posts-cache"
+
+// Simple in-memory cache (in production, you'd use a database)
+const postsCache = {
+  "book-reviews": [],
+  uklife: [],
+  lastUpdated: null,
+}
 
 export async function POST(request) {
   try {
+    console.log("Webhook received from Make.com")
+
     const body = await request.json()
-    console.log("Received data from Make.com:", body)
+    console.log("Received data:", JSON.stringify(body, null, 2))
 
     // Handle both single post and array of posts
     let posts = []
@@ -12,103 +20,70 @@ export async function POST(request) {
       posts = body
     } else if (body.posts && Array.isArray(body.posts)) {
       posts = body.posts
-    } else if (body.id) {
+    } else if (body.id || body.title) {
       // Single post
       posts = [body]
     } else {
+      console.log("Invalid data format received")
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
     }
+
+    console.log(`Processing ${posts.length} posts`)
 
     // Process and categorize posts
     const bookReviewPosts = []
     const ukLifePosts = []
 
-    posts.forEach((post) => {
+    posts.forEach((post, index) => {
+      console.log(`Processing post ${index + 1}:`, post.title || post.name || "Untitled")
+
       // Transform Make.com/Notion data to your format
       const transformedPost = {
-        id: post.id || post.notion_id || Date.now().toString(),
-        notion_id: post.id || post.notion_id,
-        title: post.title || post.name || post["Aa Post name"] || "Untitled",
-        slug: generateSlug(post.title || post.name || post["Aa Post name"] || "untitled"),
-        content: post.content || `<p>This post was synced from Notion via Make.com.</p>`,
-        excerpt: post.excerpt || (post.title || post.name || "").substring(0, 150) + "...",
-        category: post.category || "general",
-        featured_image: post.photo_url || post.featured_image || "/placeholder.png?height=400&width=600",
-        tags: post.tags || post["讀書心得"] || post["人生其他"] || [],
-        author: post.author || post.owner || "Yilung C",
-        sub_topic: post.sub_topic || post.label || post["Label"] || "General",
+        id: post.id || `post-${Date.now()}-${index}`,
+        title: post.title || post.name || "Untitled Post",
+        content: post.content || "Content synced from Notion via Make.com",
+        excerpt: (post.title || post.name || "").substring(0, 150) + "...",
+        featured_image: post.photo_url || "/placeholder.png?height=400&width=600",
+        published_at: post.created_time || new Date().toISOString(),
+        created_at: post.created_time || new Date().toISOString(),
+        updated_at: post.last_edited_time || new Date().toISOString(),
+        author: post.owner || "Yilung C",
+        tags: Array.isArray(post.tags) ? post.tags : [],
         pinned: post.pinned || false,
-        created_at: post.created_at || post.created_time || new Date().toISOString(),
-        updated_at: post.updated_at || post.last_edited_time || new Date().toISOString(),
-        published_at: post.published_at || post["New post date"] || post.created_time || new Date().toISOString(),
-        notion_url: post.notion_url || post.public_url || "",
-        original_post_url: post.original_post_url || post.post_url || "",
-        page_category: post.page_category || post.category,
+        sub_topic: post.sub_topic || post.label || "General",
+        category: "general",
+        slug: generateSlug(post.title || post.name || "untitled"),
+        notion_url: post.public_url || "",
+        original_post_url: post.post_url || "",
         last_synced: new Date().toISOString(),
       }
 
-      // Categorize posts based on your existing logic
-      const bookReviewLabels = [
-        "讀書心得",
-        "一人公司",
-        "HerRead",
-        "Taiwan and Transitional Justice",
-        "Parenting",
-        "Business and Startups",
-        "Life and Finance",
-        "Science Fiction",
-        "Philosophy",
-        "Fiction",
-        "Classic",
-        "Contemporary",
-        "Humor",
-        "Adventure",
-        "Reading List",
-        "Poems",
-        "Book",
-      ]
+      // Simple categorization logic
+      const postTitle = (transformedPost.title || "").toLowerCase()
+      const postTags = transformedPost.tags.join(" ").toLowerCase()
 
-      const ukLifeLabels = [
-        "倫敦生活",
-        "倫敦育兒",
-        "母職生活",
-        "英國私立",
-        "英國旅遊",
-        "個人議題",
-        "Daily Life",
-        "Culture & Society",
-        "Outdoor Activities",
-        "Edinburgh",
-        "London Afternoon Tea",
-        "London restaurants",
-        "London never gets boring",
-        "Travel with kids in UK",
-        "Travel with kids abroad",
-        "Raising kids in London",
-        "Oversea family",
-        "Being a Mother",
-        "Personal Thoughts",
-        "看房紀錄",
-        "居家裝修",
-        "房產知識",
-      ]
-
-      const postTags = Array.isArray(transformedPost.tags) ? transformedPost.tags : []
-      const hasBookReviewTag = postTags.some((tag) => bookReviewLabels.includes(tag))
-      const hasUkLifeTag = postTags.some((tag) => ukLifeLabels.includes(tag))
-
-      if (hasBookReviewTag || transformedPost.page_category === "book-reviews") {
+      if (postTitle.includes("book") || postTags.includes("book") || postTags.includes("讀書")) {
         transformedPost.category = "book-reviews"
         bookReviewPosts.push(transformedPost)
-      } else if (hasUkLifeTag || transformedPost.page_category === "uklife") {
+      } else if (
+        postTitle.includes("life") ||
+        postTitle.includes("uk") ||
+        postTags.includes("life") ||
+        postTags.includes("倫敦")
+      ) {
+        transformedPost.category = "uklife"
+        ukLifePosts.push(transformedPost)
+      } else {
+        // Default to uklife if unsure
         transformedPost.category = "uklife"
         ukLifePosts.push(transformedPost)
       }
     })
 
     // Update cache
-    updatePostsCache("book-reviews", bookReviewPosts)
-    updatePostsCache("uklife", ukLifePosts)
+    postsCache["book-reviews"] = bookReviewPosts
+    postsCache["uklife"] = ukLifePosts
+    postsCache.lastUpdated = new Date().toISOString()
 
     console.log(`Cache updated: ${bookReviewPosts.length} book reviews, ${ukLifePosts.length} UK life posts`)
 
@@ -134,11 +109,22 @@ export async function POST(request) {
 }
 
 export async function GET() {
-  const { postsCache, getCacheInfo } = await import("../../../lib/posts-cache")
   return NextResponse.json({
     success: true,
     cache: postsCache,
-    info: getCacheInfo(),
     message: "Current posts cache from Make.com",
+    timestamp: new Date().toISOString(),
   })
 }
+
+function generateSlug(text) {
+  if (!text) return "untitled"
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
+// Export the cache for other files to use
+export { postsCache }
