@@ -1,97 +1,32 @@
-import { Notion } from "../../../../lib/notion"
-import { extractPageId } from "../../../../lib/utils"
 import { NextResponse } from "next/server"
-
-
-function extractNotionSelect(property) {
-  if (!property || property.type !== "select") {
-    return null
-  }
-  return property.select?.name || null
-}
+import { revalidatePath } from "next/cache"
 
 export async function POST(req) {
   try {
     const body = await req.json()
+    console.log("Notion sync webhook received:", body)
 
-    
-    if (body.object !== "page") {
-      return NextResponse.json({ message: "Not a page update" }, { status: 200 })
-    }
+    // Revalidate the pages to fetch fresh data from cache
+    revalidatePath("/book-reviews")
+    revalidatePath("/uklife")
+    revalidatePath("/api/posts/book-reviews")
+    revalidatePath("/api/posts/uklife")
 
-    const pageId = extractPageId(body.url)
-    if (!pageId) {
-      return NextResponse.json({ message: "Invalid page ID" }, { status: 400 })
-    }
-
-    
-    const status = body.properties?.["Status"]?.select?.name
-    const category = body.properties?.["Category"]?.select?.name
-    const label = extractNotionSelect(body.properties?.["英國房產"]) 
-    const isPublished = body.properties?.["發佈"]?.checkbox || false
-
-    
-    const ukLifeLabels = [
-      "倫敦生活",
-      "倫敦育兒",
-      "母職生活",
-      "英國私立",
-      "英國旅遊",
-      "個人議題",
-      "Daily Life",
-      "Culture & Society",
-      "Outdoor Activities",
-      "Edinburgh",
-      "London Afternoon Tea",
-      "London restaurants",
-      "London never gets boring",
-      "Travel with kids in UK",
-      "Travel with kids abroad",
-      "Raising kids in London",
-      "Oversea family",
-      "Being a Mother",
-      "Personal Thoughts",
-      
-      "看房紀錄", 
-      "居家裝修", 
-      "房產知識", 
-    ]
-
-    const investmentLabels = ["房地產投資", "海外房產", "被動收入"]
-
-    
-    let calculatedCategory = category 
-
-    if (ukLifeLabels.includes(label)) {
-      calculatedCategory = "英國生活"
-    } else if (investmentLabels.includes(label)) {
-      calculatedCategory = "房地產投資"
-    }
-
-    
-    if (status === "發佈" && isPublished && (ukLifeLabels.includes(label) || investmentLabels.includes(label))) {
-      try {
-        await Notion.pages.update({
-          page_id: pageId,
-          properties: {
-            Category: {
-              select: {
-                name: calculatedCategory,
-              },
-            },
-          },
-        })
-
-        return NextResponse.json({ message: "Page category updated successfully" }, { status: 200 })
-      } catch (error) {
-        console.error("Error updating page:", error)
-        return NextResponse.json({ message: "Failed to update page" }, { status: 500 })
-      }
-    }
-
-    return NextResponse.json({ message: "No update needed or conditions not met" }, { status: 200 })
+    return NextResponse.json(
+      {
+        message: "Cache invalidated successfully - Make.com will update data",
+        timestamp: new Date().toISOString(),
+      },
+      { status: 200 },
+    )
   } catch (error) {
     console.error("Error processing webhook:", error)
-    return NextResponse.json({ message: "Error processing webhook" }, { status: 500 })
+    return NextResponse.json(
+      {
+        message: "Webhook processing failed",
+        error: error.message,
+      },
+      { status: 500 },
+    )
   }
 }

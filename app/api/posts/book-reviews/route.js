@@ -1,16 +1,24 @@
 import { NextResponse } from "next/server"
-import { getPostsByCategory, getUniqueTags } from "../../../../lib/db"
+import { getPostsFromCache, getUniqueTagsFromCache } from "../../../../lib/posts-cache"
 
-// Add this line to fix the dynamic server usage error
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
     const limit = Number.parseInt(searchParams.get("limit")) || 50
 
-    const posts = await getPostsByCategory("book-reviews", limit)
-    const uniqueTags = await getUniqueTags("book-reviews")
+    // Get posts from Make.com cache instead of Notion
+    let posts = getPostsFromCache("book-reviews")
+
+    // Apply limit
+    posts = posts.slice(0, limit)
+
+    // Sort by published date (newest first)
+    posts.sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
+
+    // Get unique tags from cached posts
+    const uniqueTags = getUniqueTagsFromCache("book-reviews")
 
     return NextResponse.json({
       success: true,
@@ -18,6 +26,7 @@ export async function GET(request) {
       uniqueTags: uniqueTags,
       count: posts.length,
       category: "book-reviews",
+      source: "make.com",
     })
   } catch (error) {
     console.error("Error fetching book review posts:", error)
