@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server"
-
-// Simple in-memory cache (in production, you'd use a database)
-const postsCache = {
-  "book-reviews": [],
-  uklife: [],
-  lastUpdated: null,
-}
+import { postsCache, updatePostsCache, generateSlug } from "../../../lib/posts-cache.js"
 
 export async function POST(request) {
   try {
@@ -80,10 +74,9 @@ export async function POST(request) {
       }
     })
 
-    // Update cache
-    postsCache["book-reviews"] = bookReviewPosts
-    postsCache["uklife"] = ukLifePosts
-    postsCache.lastUpdated = new Date().toISOString()
+    // Update cache using the shared function
+    updatePostsCache("book-reviews", bookReviewPosts)
+    updatePostsCache("uklife", ukLifePosts)
 
     console.log(`Cache updated: ${bookReviewPosts.length} book reviews, ${ukLifePosts.length} UK life posts`)
 
@@ -116,15 +109,3 @@ export async function GET() {
     timestamp: new Date().toISOString(),
   })
 }
-
-function generateSlug(text) {
-  if (!text) return "untitled"
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-}
-
-// Export the cache for other files to use
-export { postsCache }
