@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { postsCache, updatePostsCache, generateSlug } from "../../../lib/posts-cache.js"
+import { postsCache, updatePostsCache, generateSlug } from "../../../lib/posts-cache"
 
 export async function POST(request) {
   try {

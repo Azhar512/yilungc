@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getPostsFromCache, getUniqueTagsFromCache } from "../../../../lib/posts-cache.js"
+import { getPostsFromCache, getUniqueTagsFromCache } from "../../../../lib/posts-cache"
 
 export const dynamic = "force-dynamic"
 

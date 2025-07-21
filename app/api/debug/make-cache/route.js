@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { postsCache, getCacheInfo } from "../../../lib/posts-cache.js"
+import { postsCache, getCacheInfo } from "../../../lib/posts-cache"
 
 export async function GET() {
   return NextResponse.json({
