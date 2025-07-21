@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-// Simple in-memory cache - defined directly in this file
+// Simple in-memory cache
 const postsCache = {
   "book-reviews": [],
   uklife: [],
@@ -18,53 +18,91 @@ function generateSlug(text) {
 
 export async function POST(request) {
   try {
-    console.log("Webhook received from Make.com")
+    console.log("=== WEBHOOK RECEIVED ===")
 
-    const body = await request.json()
-    console.log("Received data:", JSON.stringify(body, null, 2))
-
-    // Handle both single post and array of posts
-    let posts = []
-    if (Array.isArray(body)) {
-      posts = body
-    } else if (body.posts && Array.isArray(body.posts)) {
-      posts = body.posts
-    } else if (body.id || body.title) {
-      posts = [body]
-    } else {
-      return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
+    let body
+    try {
+      body = await request.json()
+    } catch (e) {
+      console.log("Failed to parse JSON, trying text...")
+      const text = await request.text()
+      console.log("Received text:", text)
+      return NextResponse.json({ error: "Invalid JSON format", received: text }, { status: 400 })
     }
 
-    // Process posts
+    console.log("Received data:", JSON.stringify(body, null, 2))
+
+    // ACCEPT ANY DATA FORMAT - SUPER FLEXIBLE
+    let posts = []
+
+    if (Array.isArray(body)) {
+      posts = body
+    } else if (body && typeof body === "object") {
+      posts = [body]
+    } else {
+      return NextResponse.json({ error: "No valid data received" }, { status: 400 })
+    }
+
+    console.log(`Processing ${posts.length} posts`)
+
     const bookReviewPosts = []
     const ukLifePosts = []
 
     posts.forEach((post, index) => {
+      // SUPER FLEXIBLE DATA EXTRACTION
+      const safeGet = (obj, ...keys) => {
+        for (const key of keys) {
+          if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+            return obj[key]
+          }
+        }
+        return null
+      }
+
       const transformedPost = {
-        id: post.id || `post-${Date.now()}-${index}`,
-        title: post.title || post.name || "Untitled Post",
-        content: post.content || "Content synced from Notion via Make.com",
-        excerpt: (post.title || post.name || "").substring(0, 150) + "...",
-        featured_image: post.photo_url || "/placeholder.png?height=400&width=600",
-        published_at: post.created_time || new Date().toISOString(),
-        created_at: post.created_time || new Date().toISOString(),
-        updated_at: post.last_edited_time || new Date().toISOString(),
-        author: post.owner || "Yilung C",
-        tags: Array.isArray(post.tags) ? post.tags : [],
-        pinned: post.pinned || false,
-        sub_topic: post.sub_topic || post.label || "General",
+        id: safeGet(post, "id", "ID", "_id") || `post-${Date.now()}-${index}`,
+        title: safeGet(post, "title", "Title", "name", "blog_value", "Blog") || "Untitled Post",
+        content:
+          safeGet(post, "content", "Content", "description", "blog_value", "Main Content") || "Content from Notion",
+        excerpt: (safeGet(post, "title", "Title", "blog_value") || "Untitled Post").substring(0, 150) + "...",
+        featured_image:
+          safeGet(post, "photo_url", "Photo URL", "image") || "/placeholder.svg?height=400&width=600&text=Blog+Post",
+        published_at: safeGet(post, "created_time", "created_at", "date") || new Date().toISOString(),
+        created_at: safeGet(post, "created_time", "created_at") || new Date().toISOString(),
+        updated_at: safeGet(post, "last_edited_time", "updated_at") || new Date().toISOString(),
+        author: safeGet(post, "author", "owner") || "Yilung C",
+        tags: (() => {
+          const tags = []
+          const readingExp = safeGet(post, "reading_exp", "Reading Experience", "讀書心得")
+          const otherLife = safeGet(post, "other_life", "Other Life", "人生其他")
+          const regularTags = safeGet(post, "tags")
+
+          if (readingExp) tags.push(readingExp)
+          if (otherLife) tags.push(otherLife)
+          if (Array.isArray(regularTags)) tags.push(...regularTags)
+          if (typeof regularTags === "string") tags.push(regularTags)
+
+          return tags.filter(Boolean)
+        })(),
+        pinned: safeGet(post, "pinned") || false,
+        sub_topic: safeGet(post, "sub_topic", "category", "other_life", "Other Life") || "General",
         category: "general",
-        slug: generateSlug(post.title || post.name || "untitled"),
-        notion_url: post.public_url || "",
-        original_post_url: post.post_url || "",
+        slug: generateSlug(safeGet(post, "title", "Title", "blog_value") || "untitled"),
+        notion_url: safeGet(post, "notion_url", "public_url") || "",
+        original_post_url: safeGet(post, "post_url", "Post URL") || "",
         last_synced: new Date().toISOString(),
       }
 
-      // Simple categorization
+      // CATEGORIZATION
       const postTitle = (transformedPost.title || "").toLowerCase()
       const postTags = transformedPost.tags.join(" ").toLowerCase()
 
-      if (postTitle.includes("book") || postTags.includes("book") || postTags.includes("讀書")) {
+      if (
+        postTitle.includes("book") ||
+        postTags.includes("book") ||
+        postTags.includes("讀書") ||
+        postTags.includes("reading")
+      ) {
         transformedPost.category = "book-reviews"
         bookReviewPosts.push(transformedPost)
       } else {
@@ -73,14 +111,16 @@ export async function POST(request) {
       }
     })
 
-    // Update cache
+    // UPDATE CACHE
     postsCache["book-reviews"] = bookReviewPosts
     postsCache["uklife"] = ukLifePosts
     postsCache.lastUpdated = new Date().toISOString()
 
+    console.log(`✅ SUCCESS: ${bookReviewPosts.length} book reviews, ${ukLifePosts.length} uklife posts`)
+
     return NextResponse.json({
       success: true,
-      message: "Posts updated successfully via Make.com",
+      message: "Posts updated successfully!",
       counts: {
         "book-reviews": bookReviewPosts.length,
         uklife: ukLifePosts.length,
@@ -88,10 +128,11 @@ export async function POST(request) {
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error("Error processing Make.com webhook:", error)
+    console.error("❌ WEBHOOK ERROR:", error)
     return NextResponse.json(
       {
-        error: "Failed to process webhook data",
+        success: false,
+        error: "Webhook processing failed",
         details: error.message,
       },
       { status: 500 },
@@ -103,10 +144,9 @@ export async function GET() {
   return NextResponse.json({
     success: true,
     cache: postsCache,
-    message: "Current posts cache from Make.com",
+    message: "Current cache status",
     timestamp: new Date().toISOString(),
   })
 }
 
-// Export cache for other files
 export { postsCache }
