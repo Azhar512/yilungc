@@ -30,7 +30,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid JSON format", received: text }, { status: 400 })
     }
 
-    console.log("Received data:", JSON.stringify(body, null, 2))
+    console.log("Received raw data from Make.com:", JSON.stringify(body, null, 2))
 
     let posts = []
     if (Array.isArray(body)) {
@@ -47,68 +47,74 @@ export async function POST(request) {
     const ukLifePosts = []
 
     posts.forEach((post, index) => {
-      const safeGet = (obj, ...keys) => {
-        for (const key of keys) {
-          if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
-            return obj[key]
-          }
+      // Helper to safely get Notion property value
+      const getNotionPropertyValue = (properties, propertyName, type) => {
+        const prop = properties?.[propertyName]
+        if (!prop) return null
+
+        switch (type) {
+          case "title":
+          case "rich_text":
+            return prop[type]?.[0]?.plain_text || null
+          case "url":
+            return prop[type] || null
+          case "multi_select":
+            return prop[type]?.map((item) => item.name).filter(Boolean) || []
+          case "select":
+          case "status":
+            return prop[type]?.name || null
+          case "people":
+            return prop[type]?.[0]?.name || null
+          case "date":
+            return prop[type]?.start || null
+          case "checkbox":
+            return prop[type] || false
+          case "files":
+            return prop[type]?.[0]?.file?.url || prop[type]?.[0]?.external?.url || null
+          default:
+            return prop[type] || null
         }
-        return null
       }
 
       const transformedPost = {
-        id: safeGet(post, "id", "ID", "_id") || `post-${Date.now()}-${index}`,
-        title: safeGet(post, "title", "Title", "name", "blog_value", "Blog") || "Untitled Post",
-        content:
-          safeGet(post, "content", "Content", "description", "blog_value", "Main Content") || "Content from Notion",
-        excerpt: (safeGet(post, "title", "Title", "blog_value") || "Untitled Post").substring(0, 150) + "...",
+        id: post.id || `post-${Date.now()}-${index}`,
+        // Directly access properties from the raw 'properties' object
+        title: getNotionPropertyValue(post.properties, "Post name", "title") || "Untitled Post",
+        content: getNotionPropertyValue(post.properties, "Post name", "title") || "Content from Notion", // Assuming content is also in Post name for now
+        excerpt: getNotionPropertyValue(post.properties, "Post name", "title") || "Excerpt from Notion",
+        status: getNotionPropertyValue(post.properties, "Status", "status") || "published",
+
+        // Get all multi-select tags and combine them
+        tags: [
+          ...(getNotionPropertyValue(post.properties, "讀書心得", "multi_select") || []),
+          ...(getNotionPropertyValue(post.properties, "英語學習", "multi_select") || []),
+          ...(getNotionPropertyValue(post.properties, "人生其他", "multi_select") || []),
+        ].filter(Boolean), // Filter out any nulls/empties
+
         featured_image:
-          safeGet(post, "featured_image", "photo_url", "image", "Image", "cover") ||
+          getNotionPropertyValue(post.properties, "Photo URL", "url") ||
           "/placeholder.svg?height=400&width=600&text=Blog+Post",
-        published_at:
-          safeGet(post, "published_at", "created_time", "date", "Date", "publish_date") || new Date().toISOString(),
-        created_at: safeGet(post, "created_at", "created_time", "date") || new Date().toISOString(),
-        updated_at: safeGet(post, "updated_at", "last_edited_time", "modified") || new Date().toISOString(),
-        author: safeGet(post, "author", "Author", "owner", "Owner", "created_by") || "Yilung C",
+        published_at: getNotionPropertyValue(post.properties, "New post date", "date") || new Date().toISOString(),
+        created_at: post.created_time || new Date().toISOString(), // Use top-level created_time
+        updated_at: post.last_edited_time || new Date().toISOString(), // Use top-level last_edited_time
+        author: getNotionPropertyValue(post.properties, "Owner", "people") || "Yilung C",
+        platform: getNotionPropertyValue(post.properties, "Platform", "select") || "",
+        content_type: getNotionPropertyValue(post.properties, "Content type", "select") || "",
+        pinned: getNotionPropertyValue(post.properties, "Pinned", "checkbox") || false,
+        public_url: post.public_url || "", // Use top-level public_url
+        post_url: getNotionPropertyValue(post.properties, "Post URL", "url") || "", // Use property Post URL
 
-        // --- ENHANCED TAG HANDLING ---
-        tags: (() => {
-          const allTags = []
-          const notionTags = safeGet(post, "notion_tags") // New property from Make.com
-          const readingExpTags = safeGet(post, "reading_experience_tags") // New property from Make.com
-          const otherLifeTags = safeGet(post, "other_life_tags") // New property from Make.com
-          const englishLearningTags = safeGet(post, "english_learning_tags") // New property from Make.com
-
-          // Combine all potential tag sources, ensuring they are arrays
-          const addTags = (source) => {
-            if (Array.isArray(source)) {
-              allTags.push(
-                ...source.map((tag) => (typeof tag === "object" && tag !== null ? tag.name : tag)).filter(Boolean),
-              )
-            } else if (typeof source === "string" && source.trim() !== "") {
-              allTags.push(source.trim())
-            }
-          }
-
-          addTags(notionTags)
-          addTags(readingExpTags)
-          addTags(otherLifeTags)
-          addTags(englishLearningTags)
-
-          // Remove duplicates and return
-          return [...new Set(allTags)]
-        })(),
-        // --- END ENHANCED TAG HANDLING ---
-
-        pinned: safeGet(post, "pinned", "Pinned", "featured") || false,
-        sub_topic: safeGet(post, "sub_topic", "subtopic", "category", "Category", "label", "Label") || "General",
+        sub_topic: "General", // Default, can be refined based on tags
         category: "general",
-        slug: generateSlug(safeGet(post, "title", "Title", "name", "blog_value") || "untitled"),
-        notion_url: safeGet(post, "notion_url", "public_url", "url", "URL") || "",
-        original_post_url: safeGet(post, "original_post_url", "post_url", "link", "Link") || "",
+        slug: generateSlug(getNotionPropertyValue(post.properties, "Post name", "title") || "untitled"),
         last_synced: new Date().toISOString(),
         raw_data: post, // Keep original data for debugging
       }
+
+      // Refine sub_topic based on tags
+      if (transformedPost.tags.includes("倫敦London")) transformedPost.sub_topic = "London"
+      else if (transformedPost.tags.includes("在家創業")) transformedPost.sub_topic = "Homepreneur"
+      // Add more sub_topic logic as needed
 
       // CATEGORIZATION
       const postTitle = (transformedPost.title || "").toLowerCase()
