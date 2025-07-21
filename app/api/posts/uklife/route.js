@@ -1,22 +1,33 @@
 import { NextResponse } from "next/server"
-import { getPostsFromCache, getUniqueSubTopicsFromCache } from "../../../../lib/posts-cache"
 
 export const dynamic = "force-dynamic"
 
+// Import cache from webhook
+let postsCache = {
+  "book-reviews": [],
+  uklife: [],
+  lastUpdated: null,
+}
+
 export async function GET(request) {
   try {
+    // Try to get cache from webhook module
+    try {
+      const webhookModule = await import("../../webhook/make-posts/route.js")
+      postsCache = webhookModule.postsCache
+    } catch (e) {
+      console.log("Could not import cache, using empty cache")
+    }
+
     const { searchParams } = new URL(request.url)
     const limit = Number.parseInt(searchParams.get("limit")) || 50
 
-    // Get posts from Make.com cache
-    let posts = getPostsFromCache("uklife")
-
-    // Apply limit and sort
+    let posts = postsCache["uklife"] || []
     posts = posts.slice(0, limit)
     posts.sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
 
-    // Get unique sub topics
-    const uniqueSubTopics = getUniqueSubTopicsFromCache("uklife")
+    const allSubTopics = posts.map((post) => post.sub_topic).filter(Boolean)
+    const uniqueSubTopics = [...new Set(allSubTopics)]
 
     return NextResponse.json({
       success: true,

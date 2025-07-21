@@ -1,5 +1,20 @@
 import { NextResponse } from "next/server"
-import { postsCache, updatePostsCache, generateSlug } from "../../../lib/posts-cache"
+
+// Simple in-memory cache - defined directly in this file
+const postsCache = {
+  "book-reviews": [],
+  uklife: [],
+  lastUpdated: null,
+}
+
+function generateSlug(text) {
+  if (!text) return "untitled"
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
 
 export async function POST(request) {
   try {
@@ -15,23 +30,16 @@ export async function POST(request) {
     } else if (body.posts && Array.isArray(body.posts)) {
       posts = body.posts
     } else if (body.id || body.title) {
-      // Single post
       posts = [body]
     } else {
-      console.log("Invalid data format received")
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 })
     }
 
-    console.log(`Processing ${posts.length} posts`)
-
-    // Process and categorize posts
+    // Process posts
     const bookReviewPosts = []
     const ukLifePosts = []
 
     posts.forEach((post, index) => {
-      console.log(`Processing post ${index + 1}:`, post.title || post.name || "Untitled")
-
-      // Transform Make.com/Notion data to your format
       const transformedPost = {
         id: post.id || `post-${Date.now()}-${index}`,
         title: post.title || post.name || "Untitled Post",
@@ -52,33 +60,23 @@ export async function POST(request) {
         last_synced: new Date().toISOString(),
       }
 
-      // Simple categorization logic
+      // Simple categorization
       const postTitle = (transformedPost.title || "").toLowerCase()
       const postTags = transformedPost.tags.join(" ").toLowerCase()
 
       if (postTitle.includes("book") || postTags.includes("book") || postTags.includes("讀書")) {
         transformedPost.category = "book-reviews"
         bookReviewPosts.push(transformedPost)
-      } else if (
-        postTitle.includes("life") ||
-        postTitle.includes("uk") ||
-        postTags.includes("life") ||
-        postTags.includes("倫敦")
-      ) {
-        transformedPost.category = "uklife"
-        ukLifePosts.push(transformedPost)
       } else {
-        // Default to uklife if unsure
         transformedPost.category = "uklife"
         ukLifePosts.push(transformedPost)
       }
     })
 
-    // Update cache using the shared function
-    updatePostsCache("book-reviews", bookReviewPosts)
-    updatePostsCache("uklife", ukLifePosts)
-
-    console.log(`Cache updated: ${bookReviewPosts.length} book reviews, ${ukLifePosts.length} UK life posts`)
+    // Update cache
+    postsCache["book-reviews"] = bookReviewPosts
+    postsCache["uklife"] = ukLifePosts
+    postsCache.lastUpdated = new Date().toISOString()
 
     return NextResponse.json({
       success: true,
@@ -109,3 +107,6 @@ export async function GET() {
     timestamp: new Date().toISOString(),
   })
 }
+
+// Export cache for other files
+export { postsCache }
