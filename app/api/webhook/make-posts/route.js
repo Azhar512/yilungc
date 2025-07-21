@@ -32,9 +32,7 @@ export async function POST(request) {
 
     console.log("Received data:", JSON.stringify(body, null, 2))
 
-    // ACCEPT ANY DATA FORMAT - SUPER FLEXIBLE
     let posts = []
-
     if (Array.isArray(body)) {
       posts = body
     } else if (body && typeof body === "object") {
@@ -49,7 +47,6 @@ export async function POST(request) {
     const ukLifePosts = []
 
     posts.forEach((post, index) => {
-      // SUPER FLEXIBLE DATA EXTRACTION
       const safeGet = (obj, ...keys) => {
         for (const key of keys) {
           if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
@@ -66,42 +63,65 @@ export async function POST(request) {
           safeGet(post, "content", "Content", "description", "blog_value", "Main Content") || "Content from Notion",
         excerpt: (safeGet(post, "title", "Title", "blog_value") || "Untitled Post").substring(0, 150) + "...",
         featured_image:
-          safeGet(post, "photo_url", "Photo URL", "image") || "/placeholder.svg?height=400&width=600&text=Blog+Post",
-        published_at: safeGet(post, "created_time", "created_at", "date") || new Date().toISOString(),
-        created_at: safeGet(post, "created_time", "created_at") || new Date().toISOString(),
-        updated_at: safeGet(post, "last_edited_time", "updated_at") || new Date().toISOString(),
-        author: safeGet(post, "author", "owner") || "Yilung C",
+          safeGet(post, "featured_image", "photo_url", "image", "Image", "cover") ||
+          "/placeholder.svg?height=400&width=600&text=Blog+Post",
+        published_at:
+          safeGet(post, "published_at", "created_time", "date", "Date", "publish_date") || new Date().toISOString(),
+        created_at: safeGet(post, "created_at", "created_time", "date") || new Date().toISOString(),
+        updated_at: safeGet(post, "updated_at", "last_edited_time", "modified") || new Date().toISOString(),
+        author: safeGet(post, "author", "Author", "owner", "Owner", "created_by") || "Yilung C",
+
+        // --- ENHANCED TAG HANDLING ---
         tags: (() => {
-          const tags = []
-          const readingExp = safeGet(post, "reading_exp", "Reading Experience", "讀書心得")
-          const otherLife = safeGet(post, "other_life", "Other Life", "人生其他")
-          const regularTags = safeGet(post, "tags")
+          const allTags = []
+          const notionTags = safeGet(post, "notion_tags") // New property from Make.com
+          const readingExpTags = safeGet(post, "reading_experience_tags") // New property from Make.com
+          const otherLifeTags = safeGet(post, "other_life_tags") // New property from Make.com
+          const englishLearningTags = safeGet(post, "english_learning_tags") // New property from Make.com
 
-          if (readingExp) tags.push(readingExp)
-          if (otherLife) tags.push(otherLife)
-          if (Array.isArray(regularTags)) tags.push(...regularTags)
-          if (typeof regularTags === "string") tags.push(regularTags)
+          // Combine all potential tag sources, ensuring they are arrays
+          const addTags = (source) => {
+            if (Array.isArray(source)) {
+              allTags.push(
+                ...source.map((tag) => (typeof tag === "object" && tag !== null ? tag.name : tag)).filter(Boolean),
+              )
+            } else if (typeof source === "string" && source.trim() !== "") {
+              allTags.push(source.trim())
+            }
+          }
 
-          return tags.filter(Boolean)
+          addTags(notionTags)
+          addTags(readingExpTags)
+          addTags(otherLifeTags)
+          addTags(englishLearningTags)
+
+          // Remove duplicates and return
+          return [...new Set(allTags)]
         })(),
-        pinned: safeGet(post, "pinned") || false,
-        sub_topic: safeGet(post, "sub_topic", "category", "other_life", "Other Life") || "General",
+        // --- END ENHANCED TAG HANDLING ---
+
+        pinned: safeGet(post, "pinned", "Pinned", "featured") || false,
+        sub_topic: safeGet(post, "sub_topic", "subtopic", "category", "Category", "label", "Label") || "General",
         category: "general",
-        slug: generateSlug(safeGet(post, "title", "Title", "blog_value") || "untitled"),
-        notion_url: safeGet(post, "notion_url", "public_url") || "",
-        original_post_url: safeGet(post, "post_url", "Post URL") || "",
+        slug: generateSlug(safeGet(post, "title", "Title", "name", "blog_value") || "untitled"),
+        notion_url: safeGet(post, "notion_url", "public_url", "url", "URL") || "",
+        original_post_url: safeGet(post, "original_post_url", "post_url", "link", "Link") || "",
         last_synced: new Date().toISOString(),
+        raw_data: post, // Keep original data for debugging
       }
 
       // CATEGORIZATION
       const postTitle = (transformedPost.title || "").toLowerCase()
       const postTags = transformedPost.tags.join(" ").toLowerCase()
+      const postContent = (transformedPost.content || "").toLowerCase()
 
       if (
         postTitle.includes("book") ||
         postTags.includes("book") ||
         postTags.includes("讀書") ||
-        postTags.includes("reading")
+        postTags.includes("reading") ||
+        postContent.includes("book") ||
+        postContent.includes("review")
       ) {
         transformedPost.category = "book-reviews"
         bookReviewPosts.push(transformedPost)
